@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    {
+      "source": "/signup",
+      "destination": "https://tracktags.fly.dev/biz_2FFEAB27-752C-4125-99E9-99202D3CEDD3/signup"
+    },
+    {
+      "source": "/login",
+      "destination": "https://tracktags.fly.dev/biz_2FFEAB27-752C-4125-99E9-99202D3CEDD3/login"
+    },
+    {
+      "source": "/workspace",
+      "destination": "https://tracktags.fly.dev/biz_2FFEAB27-752C-4125-99E9-99202D3CEDD3/workspace"
+    },
+    {
+      "source": "/workspace/:path*",
+      "destination": "https://tracktags.fly.dev/biz_2FFEAB27-752C-4125-99E9-99202D3CEDD3/workspace/:path*"
+    },
+    {
+      "source": "/assets/:path*",
+      "destination": "https://tracktags.fly.dev/assets/:path*"
+    },
+    {
+      "source": "/images/:path*",
+      "destination": "https://tracktags.fly.dev/images/:path*"
+    },
+    {
+      "source": "/live/:path*",
+      "destination": "https://tracktags.fly.dev/live/:path*"
+    }
+  ]
+}
