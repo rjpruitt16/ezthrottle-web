@@ -144,79 +144,179 @@ response = client.request(
             </div>
         </div>
     </div>
-
-    <!-- Pricing -->
-    <div id="pricing" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 class="text-3xl font-bold text-center mb-12">Simple, Transparent Pricing</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <!-- Free -->
-            <div class="border rounded-lg p-6 bg-white">
-                <h3 class="text-xl font-bold mb-4">Free</h3>
-                <p class="text-3xl font-bold mb-4">$0</p>
-                <p class="text-gray-600 mb-4">10k requests/month</p>
-                <ul class="space-y-2 text-sm text-gray-700">
-                    <li>✓ Shared infrastructure</li>
-                    <li>✓ Best effort delivery</li>
-                    <li>✓ Community support</li>
-                </ul>
+    <!-- Cost Comparison -->
+    <div class="bg-gradient-to-r from-red-50 to-orange-50 py-16">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4">The Hidden Cost of DIY Rate Limiting</h2>
+            <p class="text-center text-gray-600 mb-12 text-lg">Building it yourself costs 3-5x more than EZThrottle</p>
+            
+            <!-- Comparison Table -->
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- AWS Lambda DIY -->
+                <div class="bg-white rounded-lg shadow-lg p-8 border-2 border-red-300">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-red-600 mb-2">AWS Lambda DIY</h3>
+                        <p class="text-sm text-gray-600">2 Million Requests/Month</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center pb-3 border-b">
+                            <span class="text-gray-700">Lambda compute (2M invocations)</span>
+                            <span class="font-semibold">$400</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b">
+                            <span class="text-gray-700">API Gateway fees</span>
+                            <span class="font-semibold">$70</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b">
+                            <span class="text-gray-700">NAT Gateway (outbound)</span>
+                            <span class="font-semibold">$90</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b">
+                            <span class="text-gray-700">DynamoDB (state tracking)</span>
+                            <span class="font-semibold">$50</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b">
+                            <span class="text-gray-700">CloudWatch logs & monitoring</span>
+                            <span class="font-semibold">$40</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-red-300">
+                            <span class="text-gray-700 font-medium">AWS Subtotal</span>
+                            <span class="font-bold text-lg">$650/mo</span>
+                        </div>
+                        
+                        <!-- Engineering Time -->
+                        <div class="bg-red-50 p-4 rounded-lg mt-6">
+                            <p class="font-semibold text-red-900 mb-3">Engineering Costs:</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span>Initial build (2-3 weeks @ $200/hr)</span>
+                                    <span class="font-semibold">$16,000-24,000</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Ongoing maintenance (10 hrs/mo)</span>
+                                    <span class="font-semibold">$2,000/mo</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Bug fixes & incident response</span>
+                                    <span class="font-semibold">$500-2,000/mo</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-red-100 p-4 rounded-lg mt-4">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-lg">Monthly Total</span>
+                                <span class="font-bold text-2xl text-red-600">$3,150+</span>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">Plus $16k-24k upfront build cost</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- EZThrottle -->
+                <div class="bg-white rounded-lg shadow-lg p-8 border-2 border-green-500 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-2 rounded-full font-bold text-sm">
+                        90% CHEAPER
+                    </div>
+                    
+                    <div class="text-center mb-6 mt-4">
+                        <h3 class="text-2xl font-bold text-green-600 mb-2">EZThrottle</h3>
+                        <p class="text-sm text-gray-600">2 Million Requests/Month</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center pb-3 border-b">
+                            <span class="text-gray-700">EZThrottle service</span>
+                            <span class="font-semibold">$300</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b opacity-40">
+                            <span class="text-gray-700 line-through">API Gateway</span>
+                            <span class="font-semibold">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b opacity-40">
+                            <span class="text-gray-700 line-through">NAT Gateway</span>
+                            <span class="font-semibold">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b opacity-40">
+                            <span class="text-gray-700 line-through">Database</span>
+                            <span class="font-semibold">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b opacity-40">
+                            <span class="text-gray-700 line-through">Monitoring</span>
+                            <span class="font-semibold">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-green-300">
+                            <span class="text-gray-700 font-medium">EZThrottle Total</span>
+                            <span class="font-bold text-lg">$300/mo</span>
+                        </div>
+                        
+                        <!-- Engineering Time -->
+                        <div class="bg-green-50 p-4 rounded-lg mt-6">
+                            <p class="font-semibold text-green-900 mb-3">Engineering Costs:</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="line-through opacity-50">Initial build</span>
+                                    <span class="font-semibold">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Integration (30 minutes)</span>
+                                    <span class="font-semibold">$100</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="line-through opacity-50">Ongoing maintenance</span>
+                                    <span class="font-semibold">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="line-through opacity-50">Bug fixes</span>
+                                    <span class="font-semibold">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-100 p-4 rounded-lg mt-4">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-lg">Monthly Total</span>
+                                <span class="font-bold text-2xl text-green-600">$300</span>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">No upfront costs. Cancel anytime.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Starter -->
-            <div class="border rounded-lg p-6 bg-white">
-                <h3 class="text-xl font-bold mb-4">Starter</h3>
-                <p class="text-3xl font-bold mb-4">$25<span class="text-lg text-gray-600">/mo</span></p>
-                <p class="text-gray-600 mb-4">100k requests/month</p>
-                <ul class="space-y-2 text-sm text-gray-700">
-                    <li>✓ Priority queue access</li>
-                    <li>✓ Guaranteed delivery</li>
-                    <li>✓ Email support</li>
-                </ul>
+            
+            <!-- Savings Summary -->
+            <div class="mt-12 bg-white rounded-lg shadow-xl p-8 max-w-3xl mx-auto border-2 border-green-500">
+                <div class="text-center">
+                    <p class="text-gray-600 mb-2">With EZThrottle, you save:</p>
+                    <p class="text-5xl font-bold text-green-600 mb-2">$2,850/month</p>
+                    <p class="text-gray-600 text-lg mb-4">Plus $16,000-24,000 in upfront development</p>
+                    <div class="grid md:grid-cols-3 gap-4 mt-6 text-center">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-3xl font-bold text-green-600">90%</p>
+                            <p class="text-sm text-gray-600">Cost Reduction</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-3xl font-bold text-green-600">100%</p>
+                            <p class="text-sm text-gray-600">Less Maintenance</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-3xl font-bold text-green-600">0</p>
+                            <p class="text-sm text-gray-600">Infrastructure Headaches</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Professional -->
-            <div class="border-2 border-black rounded-lg p-6 bg-white relative">
-                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-1 rounded text-sm">
-                    POPULAR
-                </span>
-                <h3 class="text-xl font-bold mb-4">Professional</h3>
-                <p class="text-3xl font-bold mb-4">$100<span class="text-lg text-gray-600">/mo</span></p>
-                <p class="text-gray-600 mb-4">500k requests/month</p>
-                <ul class="space-y-2 text-sm text-gray-700">
-                    <li>✓ Dedicated resources (soon)</li>
-                    <li>✓ Priority support</li>
-                    <li>✓ SLA guarantee</li>
-                </ul>
-            </div>
-
-            <!-- Business -->
-            <div class="border rounded-lg p-6 bg-white">
-                <h3 class="text-xl font-bold mb-4">Business</h3>
-                <p class="text-3xl font-bold mb-4">$300<span class="text-lg text-gray-600">/mo</span></p>
-                <p class="text-gray-600 mb-4">2M requests/month</p>
-                <ul class="space-y-2 text-sm text-gray-700">
-                    <li>✓ 2-machine cluster (soon)</li>
-                    <li>✓ Dedicated support</li>
-                    <li>✓ Custom webhooks</li>
-                </ul>
-            </div>
-
-            <!-- Enterprise -->
-            <div class="border rounded-lg p-6 bg-gray-200 lg:col-span-2">
-                <h3 class="text-xl font-bold mb-4">Enterprise</h3>
-                <p class="text-3xl font-bold mb-4">Custom</p>
-                <p class="text-gray-600 mb-4">Unlimited scale</p>
-                <ul class="space-y-2 text-sm text-gray-700">
-                    <li>✓ Dedicated clusters</li>
-                    <li>✓ On-premise option</li>
-                    <li>✓ 24/7 support</li>
-                </ul>
-                <a href="mailto:support@ezthrottle.network" class="mt-4 inline-block text-blue-600 hover:text-blue-700">
-                    Contact Sales →
-                </a>
+            
+            <!-- Bottom Note -->
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-600 italic">
+                    * AWS costs based on 2M requests/month, 512MB memory, 3-second execution time. 
+                    Engineering costs assume $200/hour senior developer rate (conservative estimate).
+                </p>
             </div>
         </div>
     </div>
-
     <!-- CTA -->
     <div class="bg-black text-white py-16">
         <div class="max-w-4xl mx-auto px-4 text-center">
