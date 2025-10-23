@@ -10,6 +10,17 @@
     <!-- Hero -->
     <div class="bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mb-16">
+                <h1 class="text-2xl font-bold text-gray-900">EZThrottle</h1>
+                <div class="space-x-6 text-sm">
+                    <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
+                    <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
+                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
+                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                </div>
+            </div>
+            
             <div class="text-center">
                 <h1 class="text-5xl font-bold text-gray-900 mb-4">
                     EZThrottle
@@ -602,6 +613,41 @@ response = client.request(
         </div>
     </div>
 
+    <!-- Open Source & Transparent -->
+    <div class="bg-gradient-to-r from-purple-50 to-blue-50 py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Open & Transparent</h2>
+            
+            <p class="text-xl text-gray-700 mb-8">
+                Our landing page, FAQ, and trial process are all open source on GitHub.
+            </p>
+            
+            <div class="bg-white rounded-lg p-8 shadow-sm text-left mb-8">
+                <h3 class="font-bold text-lg mb-4">🔍 See Exactly How Trial Requests Work</h3>
+                <p class="text-gray-700 mb-4">
+                    We use email templates for trial requests. No hidden questions, no surprises. 
+                    <strong>You can see the exact template before you apply.</strong>
+                </p>
+                <p class="text-sm text-gray-600 italic">
+                    "We're gambling on you. We want to know who we're betting on."
+                </p>
+            </div>
+            
+            <a href="https://github.com/rjpruitt16/ezthrottle-web" 
+               target="_blank"
+               class="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                </svg>
+                View on GitHub
+            </a>
+            
+            <p class="mt-6 text-sm text-gray-600">
+                Read the README • See trial email template • Fork if you want
+            </p>
+        </div>
+    </div>
+
     <!-- Pricing -->
     <div class="bg-white py-16">
         <div class="max-w-6xl mx-auto px-4">
@@ -636,9 +682,10 @@ response = client.request(
                         <li>✓ Priority routing</li>
                         <li>✓ Email support</li>
                     </ul>
-                    <button class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
-                        Start Free Trial
-                    </button>
+                    <a href="mailto:support@ezthrottle.network?subject=Starter%20Tier%20Trial%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20request%20a%20trial%20of%20the%20Starter%20tier%20(100k%20requests%2Fmonth).%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhy%20I%20need%20EZThrottle%3A%20%0A%0AWhat%20APIs%20I'm%20rate%20limited%20on%3A%20%0A%0AHow%20I'll%20use%20100k%20requests%20to%20evaluate%3A%20%0A%0AI%20understand%20EZThrottle%20is%20immature%20but%20powerful%20-%20I'll%20use%20it%20carefully%3A%20Yes%0A%0AThanks!" 
+                       class="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 text-center">
+                        Request Trial
+                    </a>
                 </div>
                 
                 <!-- Growth Tier -->
@@ -652,9 +699,10 @@ response = client.request(
                         <li>✓ Advanced dashboard</li>
                         <li>✓ Email support (12hr)</li>
                     </ul>
-                    <button class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
-                        Start Free Trial
-                    </button>
+                    <a href="mailto:support@ezthrottle.network?subject=Growth%20Tier%20Trial%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20request%20a%20trial%20of%20the%20Growth%20tier%20(500k%20requests%2Fmonth).%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhy%20I%20need%20EZThrottle%3A%20%0A%0AWhat%20APIs%20I'm%20rate%20limited%20on%3A%20%0A%0AHow%20I'll%20use%20500k%20requests%20to%20evaluate%3A%20%0A%0AI%20understand%20EZThrottle%20is%20immature%20but%20powerful%20-%20I'll%20use%20it%20carefully%3A%20Yes%0A%0AThanks!" 
+                       class="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 text-center">
+                        Request Trial
+                    </a>
                 </div>
                 
                 <!-- Pro Tier -->
@@ -671,9 +719,10 @@ response = client.request(
                         <li>✓ Advanced dashboard</li>
                         <li>✓ Email support (24hr)</li>
                     </ul>
-                    <button class="w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-600">
-                        Start Free Trial
-                    </button>
+                    <a href="mailto:support@ezthrottle.network?subject=Pro%20Tier%20Trial%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20request%20a%20trial%20of%20the%20Pro%20tier%20(2M%20requests%2Fmonth).%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhy%20I%20need%20EZThrottle%3A%20%0A%0AWhat%20APIs%20I'm%20rate%20limited%20on%3A%20%0A%0AHow%20I'll%20use%202M%20requests%20to%20evaluate%3A%20%0A%0AI%20understand%20EZThrottle%20is%20immature%20but%20powerful%20-%20I'll%20use%20it%20carefully%3A%20Yes%0A%0AThanks!" 
+                       class="block w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 text-center">
+                        Request Trial
+                    </a>
                 </div>
                 
                 <!-- Enterprise Tier -->
@@ -727,13 +776,18 @@ response = client.request(
     <div class="border-t py-8 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
             <p class="font-semibold text-gray-900">© 2025 EZThrottle. The World's First API Aqueduct™</p>
-            <p class="text-sm mt-2">Ancient engineering principles. Modern infrastructure. Built on BEAM to last.</p>
+            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
             <div class="mt-4 space-x-4">
-                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" class="hover:text-black">SDKs</a>
-                <a href="https://github.com/rjpruitt16/ezthrottle-python" class="hover:text-black">Python SDK</a>
-                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Support</a>
-                <a href="/docs" class="hover:text-black">Documentation</a>
+                <a href="/" class="hover:text-black">Home</a>
+                <a href="/faq" class="hover:text-black">FAQ</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" target="_blank" class="hover:text-black">SDKs</a>
+                <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-black">LinkedIn</a>
+                <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-black">YouTube</a>
+                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Contact</a>
             </div>
+        </div>
+    </div>
         </div>
     </div>
 </body>
