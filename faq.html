@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - EZThrottle | Questions About The API Aqueduct</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Nav -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold">EZThrottle</a>
+                <div class="space-x-6">
+                    <a href="/" class="text-gray-600 hover:text-black">Home</a>
+                    <a href="/faq" class="text-black font-semibold">FAQ</a>
+                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-br from-blue-900 via-purple-900 to-blue-900 text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
+            <p class="text-xl text-blue-200">
+                Honest answers about what EZThrottle does, doesn't do, and why it exists.
+            </p>
+        </div>
+    </div>
+
+    <!-- FAQ Content -->
+    <div class="max-w-4xl mx-auto px-4 py-16">
+        
+        <!-- Performance & Speed -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-blue-500">Performance & Speed</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Does EZThrottle make my requests faster?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Short answer:</strong> It depends on what you mean by "faster."</p>
+                    
+                    <p class="mb-4"><strong>What EZThrottle makes faster:</strong></p>
+                    <ul class="space-y-3 mb-4 ml-6">
+                        <li class="flex items-start">
+                            <span class="text-green-600 mr-2 mt-1">✓</span>
+                            <span><strong>Eliminates retry waste:</strong> Without EZThrottle, a rate-limited request might retry 3-5 times (wasting 15-30 seconds). With EZThrottle, we only send when we know it'll succeed. Zero retries = zero wasted time.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-600 mr-2 mt-1">✓</span>
+                            <span><strong>Increases effective throughput:</strong> Every 429 error counts against your rate limit quota — even though it failed. We eliminate those wasted attempts, so you get ~40% more successful requests from the same quota.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-600 mr-2 mt-1">✓</span>
+                            <span><strong>Removes waiting from your code:</strong> Your app doesn't block doing exponential backoff anymore. Fire the request, move on, get webhook later.</span>
+                        </li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>What EZThrottle does NOT make faster:</strong></p>
+                    <ul class="space-y-3 mb-4 ml-6">
+                        <li class="flex items-start">
+                            <span class="text-red-600 mr-2 mt-1">✗</span>
+                            <span><strong>The actual API call time:</strong> If OpenAI takes 2 seconds to respond, it still takes 2 seconds. We don't make the API itself faster.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-600 mr-2 mt-1">✗</span>
+                            <span><strong>Requests when you're under rate limits:</strong> If you're only sending 1 req/sec and the limit is 10 req/sec, you're not rate limited. EZThrottle adds ~100-200ms routing overhead. Don't use it if you're not hitting rate limits.</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Bottom line:</strong> If you're hitting rate limits often, EZThrottle makes you way faster by eliminating retries. If you never hit rate limits, don't use EZThrottle — it'll just add latency.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What's the average request processing time?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>It depends on two things:</strong></p>
+                    
+                    <p class="mb-3"><strong>1. Queue depth when your request arrives</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Empty queue → processed immediately (~100-200ms latency)</li>
+                        <li>• 100 requests ahead → you wait for those 100 to complete first</li>
+                    </ul>
+                    
+                    <p class="mb-3"><strong>2. The API's rate limit</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• 10 req/sec limit → each request processes in ~100ms</li>
+                        <li>• 1 req/sec limit → each request takes ~1 second</li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>Example scenarios:</strong></p>
+                    
+                    <div class="bg-green-50 p-4 rounded mb-3">
+                        <p class="font-semibold text-green-900 mb-2">Scenario A: Light load, fast API</p>
+                        <p class="text-sm text-gray-700">Queue depth: 5 requests | Rate limit: 10 req/sec</p>
+                        <p class="text-sm text-gray-700"><strong>Your wait: ~500ms | Total: &lt;1 second</strong></p>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-4 rounded">
+                        <p class="font-semibold text-yellow-900 mb-2">Scenario B: Heavy load, slow API</p>
+                        <p class="text-sm text-gray-700">Queue depth: 1,000 requests | Rate limit: 1 req/sec</p>
+                        <p class="text-sm text-gray-700"><strong>Your wait: ~1,000 seconds | Total: 16+ minutes</strong></p>
+                    </div>
+                    
+                    <p class="mt-4 text-sm text-gray-600 italic">Key insight: We don't make the API faster. We make the waiting predictable and your code simpler.</p>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Can I use this for real-time/synchronous requests?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Probably not.</strong></p>
+                    
+                    <p class="mb-4">EZThrottle is designed for "eventually consistent" workflows where you can wait seconds, minutes, or even hours for results:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Batch processing jobs</li>
+                        <li>• Background data collection</li>
+                        <li>• Overnight research tasks</li>
+                        <li>• Content generation pipelines</li>
+                    </ul>
+                    
+                    <p class="mb-4">If you need responses in &lt;5 seconds (like user-facing API calls), EZThrottle probably isn't the right tool unless you're already severely rate limited and willing to make users wait.</p>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Coming eventually:</strong> Priority queues where you can mark urgent requests to skip the line. Not available yet. If you need this, email support@ezthrottle.network and we'll consider building it sooner.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rate Limiting & Efficiency -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-purple-500">Rate Limiting & Efficiency</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Does this increase my rate limit quota?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>No.</strong> Your API's rate limit stays exactly the same.</p>
+                    
+                    <p class="mb-4">But we <strong>maximize efficiency</strong> of your existing quota:</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-2">Without EZThrottle:</p>
+                        <p class="text-sm text-gray-700">100 requests → 60 succeed, 40 hit 429 errors</p>
+                        <p class="text-sm text-gray-700">Those 40 retry 2-3 times each = 80-120 wasted attempts</p>
+                        <p class="text-sm text-gray-700"><strong>Result: You wasted 40%+ of your quota on retries</strong></p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="font-semibold mb-2">With EZThrottle:</p>
+                        <p class="text-sm text-gray-700">100 requests → 100 succeed (we only send when they'll work)</p>
+                        <p class="text-sm text-gray-700">Zero 429 errors = zero wasted attempts</p>
+                        <p class="text-sm text-gray-700"><strong>Result: Same quota, 40% more successful requests</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">How do retries work?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>We don't retry against rate limits.</strong></p>
+                    
+                    <p class="mb-4">Traditional approach (what you're probably doing now):</p>
+                    <pre class="bg-gray-900 text-gray-100 p-4 rounded mb-4 overflow-x-auto text-sm"><code>Request → 429 error (counts against quota)
+Wait 1s...
+Request → 429 error (counts against quota)
+Wait 2s...
+Request → 429 error (counts against quota)
+Wait 4s...
+Request → Success
+
+Result: 4 attempts to get 1 successful request</code></pre>
+                    
+                    <p class="mb-4">EZThrottle approach:</p>
+                    <pre class="bg-gray-900 text-gray-100 p-4 rounded mb-4 overflow-x-auto text-sm"><code>Request → (we wait until we know it'll succeed)
+Request → Success
+
+Result: 1 attempt for 1 successful request</code></pre>
+                    
+                    <p class="text-sm text-gray-600 italic">We coordinate the timing so you never hit 429s in the first place.</p>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What rate limit do you use by default?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>2 requests per second</strong> unless told otherwise.</p>
+                    
+                    <p class="mb-4">We adapt based on:</p>
+                    <ul class="space-y-3 mb-4 ml-6">
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2 mt-1">1.</span>
+                            <span><strong>X-RateLimit-Preferred header:</strong> APIs can tell us their preferred rate (1 req/sec during peak, 5 req/sec at night, etc.). Our entire network adapts instantly.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2 mt-1">2.</span>
+                            <span><strong>Your dashboard config:</strong> You can set custom rate limits per domain if you know them.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2 mt-1">3.</span>
+                            <span><strong>429 response detection:</strong> If we see 429 errors, we back off automatically. (This shouldn't happen if we're doing our job right.)</span>
+                        </li>
+                    </ul>
+                    
+                    <p class="text-sm text-gray-600 italic">2 req/sec is conservative — most APIs allow more. But we'd rather be safe than accidentally DDoS an API.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing & Trials -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-green-500">Pricing & Trials</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What counts as a "request"?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>One request = one API call you send us.</strong></p>
+                    
+                    <p class="mb-4">You are NOT charged for:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Internal retries we do (if something fails on our end)</li>
+                        <li>• Webhook delivery attempts</li>
+                        <li>• Dashboard API calls to check status</li>
+                    </ul>
+                    
+                    <p class="mb-4">You ARE charged for:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Every request you send us, even if it fails (429, 500, timeout, etc.)</li>
+                        <li>• Requests that sit in queue but never get processed (if you cancel them)</li>
+                    </ul>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Example:</strong> You send 1,000 requests to us. We process all 1,000. You're charged for 1,000 requests. Simple.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Can I try a higher tier for free?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm border-2 border-green-500">
+                    <p class="mb-4"><strong>Yes! Case Study Program.</strong></p>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg mb-4">
+                        <p class="font-semibold text-lg mb-3">What You Get:</p>
+                        <ul class="space-y-2 ml-6 text-gray-700">
+                            <li>✓ <strong>3 months of Pro tier free</strong> ($1,497 value)</li>
+                            <li>✓ <strong>2 million requests/month</strong></li>
+                            <li>✓ <strong>Direct email access to founder</strong> (support@ezthrottle.network)</li>
+                            <li>✓ <strong>Priority feature requests</strong></li>
+                            <li>✓ <strong>Help shape the roadmap</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-6 rounded-lg mb-4">
+                        <p class="font-semibold text-lg mb-3">What We Need:</p>
+                        <ul class="space-y-2 ml-6 text-gray-700">
+                            <li>✓ Let us write a case study about your results</li>
+                            <li>✓ Share metrics (can be anonymized):
+                                <ul class="ml-6 mt-1 text-sm">
+                                    <li>- Requests/month before & after</li>
+                                    <li>- Cost/time savings</li>
+                                    <li>- Problems solved</li>
+                                </ul>
+                            </li>
+                            <li>✓ Testimonial & logo on website (if comfortable)</li>
+                            <li>✓ Honest feedback to improve the product</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="font-semibold mb-2">Who Qualifies:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• You have real rate limiting pain (not just curious)</li>
+                        <li>• Willing to integrate within 2 weeks</li>
+                        <li>• Willing to share results publicly</li>
+                    </ul>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Limited to 5 companies.</strong> Apply: <a href="mailto:support@ezthrottle.network" class="text-blue-600 underline">support@ezthrottle.network</a> with subject "Case Study Program"</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What if I go over my request limit?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4">We'll email you at <strong>80%</strong> and <strong>100%</strong> of your quota.</p>
+                    
+                    <p class="mb-4"><strong>When you hit 100%:</strong> Your requests <strong>continue processing</strong>, but you're charged overage fees.</p>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                        <p class="text-sm font-semibold mb-2">Why we charge for overages instead of blocking:</p>
+                        <p class="text-sm text-gray-700">We don't want to be your API gateway handling all traffic. We're your overflow aqueduct. Overage fees discourage using EZThrottle as a proxy for every request. Only send us rate-limited traffic.</p>
+                    </div>
+                    
+                    <p class="mb-4"><strong>Overage pricing:</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Free tier: Requests stop at 10k (upgrade to continue)</li>
+                        <li>• Paid tiers: $0.0005 per request over quota (billed next month)</li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>To avoid overages:</strong></p>
+                    <ul class="space-y-3 mb-4 ml-6">
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2 mt-1">1.</span>
+                            <span><strong>Upgrade tier instantly</strong> (prorated, takes effect immediately)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2 mt-1">2.</span>
+                            <span><strong>Use smart routing</strong> (SDK only sends 429s, not all requests)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2 mt-1">3.</span>
+                            <span><strong>Monitor your dashboard</strong> (we show real-time usage)</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Remember:</strong> EZThrottle is for overflow management. If you're hitting quota every month, you might need a higher tier — or you're routing too much traffic through us.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security & Privacy -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-red-500">Security & Privacy</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Do you store my API keys?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>No.</strong></p>
+                    
+                    <p class="mb-4">You include your API keys in the request headers/body when you send requests to us. We forward them to the target API and then forget them.</p>
+                    
+                    <p class="mb-4">We never:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Store API keys in a database</li>
+                        <li>• Log API keys</li>
+                        <li>• Cache API keys</li>
+                    </ul>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Think of us like a proxy:</strong> We see your API keys in transit (just like any proxy or CDN would), but we don't persist them anywhere.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Do you log request/response data?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Metadata only. Not the actual content.</strong></p>
+                    
+                    <p class="mb-4">We log:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Timestamp</li>
+                        <li>• Target URL (domain)</li>
+                        <li>• HTTP status code (200, 429, 500, etc.)</li>
+                        <li>• Duration</li>
+                        <li>• Request ID (for debugging)</li>
+                    </ul>
+                    
+                    <p class="mb-4">We do NOT log:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Request body</li>
+                        <li>• Response body</li>
+                        <li>• Headers (except standard rate limit headers)</li>
+                        <li>• Query parameters</li>
+                    </ul>
+                    
+                    <p class="text-sm text-gray-600 italic">Request/response bodies are processed in-memory only and never persisted to disk or database.</p>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What if EZThrottle gets hacked?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Worst case scenario:</strong> Attacker sees metadata (which APIs you call, when, how often).</p>
+                    
+                    <p class="mb-4">They CANNOT see:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Your API keys (not stored)</li>
+                        <li>• Request/response content (not stored)</li>
+                        <li>• Sensitive data you're sending (not stored)</li>
+                    </ul>
+                    
+                    <p class="mb-4">We're built this way intentionally. Zero persistent storage of sensitive data = minimal breach impact.</p>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>That said:</strong> We take security seriously. HTTPS everywhere, encrypted connections, regular updates. But I'm also honest that I'm one person building this. If you need SOC2 compliance and penetration testing, wait a year or go with a bigger vendor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">SOC2/GDPR compliance?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Not yet.</strong></p>
+                    
+                    <p class="mb-4">As a solo founder, I can't realistically claim SOC2 compliance right now. That requires:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• $20k-50k in auditing costs</li>
+                        <li>• Months of preparation</li>
+                        <li>• Multiple employees for separation of duties</li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>GDPR:</strong> We're better positioned here since we don't store personal data. Metadata is minimal and can be deleted on request.</p>
+                    
+                    <p class="mb-4"><strong>Timeline:</strong> If EZThrottle grows, compliance is planned for 2026. Enterprise customers can request architecture review: support@ezthrottle.network</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>The honest truth:</strong> If you need certified compliance today, EZThrottle isn't ready yet. If you can accept "we're privacy-focused but not yet audited," we're here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-indigo-500">Technical</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">How does the SDK actually work?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Smart routing: We only handle overflow, not your entire ocean.</strong></p>
+                    
+                    <p class="mb-4">The SDK doesn't blindly proxy all your requests through EZThrottle. That would be stupid and expensive.</p>
+                    
+                    <p class="mb-4"><strong>What actually happens:</strong></p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-3">Smart Mode (Default):</p>
+                        <ol class="space-y-3 ml-6 text-gray-700">
+                            <li><strong>1. SDK tries calling API directly first</strong>
+                                <p class="text-sm mt-1">Your request goes straight to OpenAI/Anthropic/etc.</p>
+                            </li>
+                            <li><strong>2. If you get 200 OK → Done</strong>
+                                <p class="text-sm mt-1">No EZThrottle involved. Zero latency added. You're under rate limits.</p>
+                            </li>
+                            <li><strong>3. If you get 429 → Route to EZThrottle</strong>
+                                <p class="text-sm mt-1">Now you're rate limited. SDK automatically sends request to our aqueduct.</p>
+                            </li>
+                            <li><strong>4. EZThrottle queues and webhooks you</strong>
+                                <p class="text-sm mt-1">We handle the coordination, you get result later.</p>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-2">The Win-Win:</p>
+                        <ul class="space-y-2 ml-6 text-sm text-gray-700">
+                            <li>✓ <strong>You:</strong> Only pay for overflow (rate-limited requests)</li>
+                            <li>✓ <strong>EZThrottle:</strong> Only process what you actually need help with</li>
+                            <li>✓ <strong>APIs:</strong> Don't see us as a proxy (we're overflow management)</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="mb-4"><strong>You can also force-route everything:</strong></p>
+                    <pre class="bg-gray-900 text-gray-100 p-4 rounded mb-4 overflow-x-auto text-sm"><code>client.request(
+    url="...",
+    force_route=True  # Always go through EZThrottle
+)</code></pre>
+                    
+                    <p class="mb-4">But why would you? You'd just add latency and burn quota faster.</p>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Bottom line:</strong> EZThrottle is your <strong>API aqueduct</strong> (overflow management), not your <strong>API gateway</strong> (full proxy). We only route the flood, not the normal flow.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Why isn't this open source?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Because distributed request coordination could be weaponized for DDoS attacks.</strong></p>
+                    
+                    <p class="mb-4">EZThrottle is a distributed system that:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Accepts requests from anyone on the internet</li>
+                        <li>• Coordinates across many machines</li>
+                        <li>• Sends requests to arbitrary URLs</li>
+                        <li>• Can queue millions of requests</li>
+                    </ul>
+                    
+                    <p class="mb-4">If I open sourced it, someone could:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>1. Fork the code</li>
+                        <li>2. Remove rate limiting safety checks</li>
+                        <li>3. Deploy 1,000 instances</li>
+                        <li>4. Point them all at victim.com</li>
+                        <li>5. Instant DDoS-as-a-service</li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>I'm not interested in building attack infrastructure.</strong></p>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-2">What IS open source:</p>
+                        <ul class="space-y-2 ml-6 text-sm text-gray-700">
+                            <li>✓ SDKs (Python, Node, Go)</li>
+                            <li>✓ Example integrations</li>
+                            <li>✓ Documentation</li>
+                            <li>✓ Workflow definitions (when launched)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <p class="font-semibold mb-2">What stays closed:</p>
+                        <ul class="space-y-2 ml-6 text-sm text-gray-700">
+                            <li>✗ Core coordination logic</li>
+                            <li>✗ Distributed queue implementation</li>
+                            <li>✗ Rate limiting algorithms</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">How does webhook delivery work?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4">When your request completes, we POST the result to your webhook URL.</p>
+                    
+                    <p class="mb-4"><strong>Retry schedule:</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Immediate attempt</li>
+                        <li>• Retry after 1 minute</li>
+                        <li>• Retry after 5 minutes</li>
+                        <li>• Retry after 15 minutes</li>
+                        <li>• Retry after 1 hour</li>
+                        <li>• Give up after 24 hours</li>
+                    </ul>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mb-4">
+                        <p class="text-sm"><strong>Cross-region retry (coming soon):</strong> If webhook fails from one region, we'll retry from another region. This prevents single-region outages from losing your webhooks.</p>
+                    </div>
+                    
+                    <p class="mb-4"><strong>Webhook payload:</strong></p>
+                    <pre class="bg-gray-900 text-gray-100 p-4 rounded mb-4 overflow-x-auto text-sm"><code>{
+  "request_id": "req_abc123",
+  "status": 200,
+  "body": {...},  // API response
+  "headers": {...},
+  "duration_ms": 1234,
+  "timestamp": "2025-01-15T10:30:00Z"
+}</code></pre>
+                    
+                    <p class="text-sm text-gray-600 italic">Results are also available via GET /results/:request_id for 7 days as backup.</p>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What happens if my webhook endpoint is down?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4">We retry for 24 hours (see schedule above).</p>
+                    
+                    <p class="mb-4"><strong>If all retries fail:</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Results are still stored for 7 days</li>
+                        <li>• You can fetch them via GET /results/:request_id</li>
+                        <li>• We'll email you about failed webhooks</li>
+                    </ul>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Pro tip:</strong> Set up monitoring on your webhook endpoint. If it's down, you'll know before results start piling up.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Can I use this with synchronous code?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Not easily, and you probably shouldn't try.</strong></p>
+                    
+                    <p class="mb-4">EZThrottle is fundamentally async:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• You send request → get "queued" response immediately</li>
+                        <li>• Request processes (seconds/minutes/hours later)</li>
+                        <li>• We webhook you the result</li>
+                    </ul>
+                    
+                    <p class="mb-4">To use it synchronously, you'd need to:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>1. Send request</li>
+                        <li>2. Poll GET /results/:request_id in a loop</li>
+                        <li>3. Block your thread waiting</li>
+                        <li>4. Return result when ready</li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>This defeats the entire purpose.</strong> If you're blocking and polling, just do exponential backoff yourself.</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Better approach:</strong> Refactor your code to be async. Use webhooks. Embrace "fire and forget." Your app will be more scalable and you'll sleep better.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">How do you coordinate across regions/clusters?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Cross-cluster routing via database coordination (the magic).</strong></p>
+                    
+                    <p class="mb-4">Right now, we run independent clusters per region. Eventually, they'll unite into a coordinated network:</p>
+                    
+                    <div class="bg-purple-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-3">How Cross-Cluster Routing Will Work:</p>
+                        <ol class="space-y-3 ml-6 text-sm text-gray-700">
+                            <li><strong>1. Request arrives in US-East cluster</strong>
+                                <p class="mt-1">US-East has 1,000 queued OpenAI requests, all waiting.</p>
+                            </li>
+                            <li><strong>2. Database sees EU cluster is idle</strong>
+                                <p class="mt-1">EU has capacity and can process OpenAI requests faster right now.</p>
+                            </li>
+                            <li><strong>3. Route a percentage of traffic to EU</strong>
+                                <p class="mt-1">20% of US-East overflow → EU cluster (configurable threshold).</p>
+                            </li>
+                            <li><strong>4. Request completes, deleted immediately</strong>
+                                <p class="mt-1">Result webhooks to you, request record deleted. Minimal storage cost, minimal data risk.</p>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <p class="mb-4"><strong>Why this matters:</strong></p>
+                    <ul class="space-y-3 mb-4 ml-6">
+                        <li class="flex items-start">
+                            <span class="text-green-600 mr-2 mt-1">✓</span>
+                            <span><strong>Faster processing:</strong> Your request finds the cluster with capacity, not stuck waiting behind 1,000 others.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-600 mr-2 mt-1">✓</span>
+                            <span><strong>Reliability:</strong> If entire US-East cluster goes down, EU can pick up the requests automatically.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-600 mr-2 mt-1">✓</span>
+                            <span><strong>Low storage cost:</strong> Requests deleted immediately after completion. Only metadata persists for 30 days.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-600 mr-2 mt-1">✓</span>
+                            <span><strong>Security:</strong> Minimal data at rest = minimal breach risk.</span>
+                        </li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>Latency consideration:</strong></p>
+                    <p class="text-sm text-gray-700 mb-4">Cross-region routing adds ~50-100ms latency vs staying in-region. But if your request would wait 10 minutes in US-East queue vs 30 seconds in EU queue, that trade-off is worth it.</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Timeline:</strong> Cross-cluster coordination coming Q3 2026. Right now, clusters run independently. But the database foundation is being built for this.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reliability -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-yellow-500">Reliability & Uptime</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What's your uptime SLA?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>I don't promise an SLA yet.</strong></p>
+                    
+                    <p class="mb-4">Here's why I'm being honest about this:</p>
+                    
+                    <div class="bg-yellow-50 p-6 rounded-lg mb-4">
+                        <p class="mb-3">I'm a solo founder building infrastructure on BEAM — which is rock-solid technology that's powered telecom switches for 40 years with 99.9999999% uptime.</p>
+                        
+                        <p class="mb-3"><strong>But:</strong> I'm still learning to master it. I'm challenging myself to build something reliable, but there will be mistakes in the first year.</p>
+                        
+                        <p class="mb-3">I'd rather be honest about this than promise an SLA I can't guarantee and let you down.</p>
+                    </div>
+                    
+                    <p class="mb-4"><strong>What I CAN promise:</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Built on BEAM/OTP (fault-tolerant by design)</li>
+                        <li>• Running on Fly.io (distributed across regions)</li>
+                        <li>• Supervision trees automatically restart crashed processes</li>
+                        <li>• Requests replicated across machines (minimal data loss)</li>
+                        <li>• I'm monitoring it 24/7 and care deeply about reliability</li>
+                    </ul>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>As EZThrottle matures:</strong> SLAs will come. But not until I'm confident I can deliver them consistently. Probably 2026.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">What happens during your deploys?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Goal: Rolling deploys with zero downtime.</strong></p>
+                    <p class="mb-4"><strong>Reality: EZThrottle may drop requests during deployments.</strong></p>
+                    
+                    <p class="mb-4">How deploys work:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>1. Deploy new version to one machine</li>
+                        <li>2. Wait for it to be healthy</li>
+                        <li>3. Deploy to next machine</li>
+                        <li>4. Repeat until all machines updated</li>
+                    </ul>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-2">Honest assessment:</p>
+                        <p class="text-sm text-gray-700 mb-2">In theory, we can achieve 100% reliability with perfect rolling deploys. In practice, there's a small window where requests might be dropped if timing is unlucky.</p>
+                        <p class="text-sm text-gray-700">I'm working to minimize this, but I'd rather be transparent: deploys carry a tiny risk of dropped requests. Most of the time it works perfectly. Sometimes it doesn't.</p>
+                    </div>
+                    
+                    <p class="mb-4"><strong>Mitigation:</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Deploys happen during low-traffic windows (3-5am ET)</li>
+                        <li>• Requests written to database for cross-region failover</li>
+                        <li>• If request drops, your SDK can retry (it'll hit EZThrottle again)</li>
+                    </ul>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>As EZThrottle matures:</strong> This will get better. Eventually we'll have true zero-downtime deploys. But we're not there yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Where is my data stored?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Requests: In-memory only (not stored)</strong></p>
+                    <p class="mb-4"><strong>Metadata: PostgreSQL on Fly.io (encrypted at rest)</strong></p>
+                    
+                    <p class="mb-4">Regions:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• United States (primary)</li>
+                        <li>• Europe (GDPR-friendly)</li>
+                        <li>• Asia-Pacific (coming soon)</li>
+                    </ul>
+                    
+                    <p class="mb-4"><strong>Data retention:</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Request/response bodies: 0 days (never stored)</li>
+                        <li>• Metadata (logs): 30 days</li>
+                        <li>• Results (for polling): 7 days</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Can I get support?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Yes. Email: support@ezthrottle.network</strong></p>
+                    
+                    <p class="mb-4">What to expect:</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mb-3">
+                        <p class="font-semibold mb-2">Free Tier:</p>
+                        <p class="text-sm text-gray-700">Community support (GitHub discussions, email when I can). No response time guarantee.</p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mb-3">
+                        <p class="font-semibold mb-2">Pro Tier ($499/mo):</p>
+                        <p class="text-sm text-gray-700">Email support. I'll respond within 24 hours (usually much faster). You're helping fund development, so I prioritize you.</p>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="font-semibold mb-2">Case Study Program:</p>
+                        <p class="text-sm text-gray-700">Direct access to me. Email, call if urgent. I'll help you succeed because your success is the case study.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About the Founder -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-pink-500">About EZThrottle</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Who's building this?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Me. Rahmi Pruitt. Solo founder.</strong></p>
+                    
+                    <div class="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg mb-4">
+                        <p class="mb-3 text-gray-700">
+                            I'm a burnout-tired engineer who spent years building software for other people's goals. 
+                            Never got to work on projects that were actually fun — like building infrastructure to help engineers sleep at night.
+                        </p>
+                        
+                        <p class="mb-3 text-gray-700">
+                            EZThrottle exists because I believe engineers shouldn't babysit rate limits. 
+                            You should be able to close your laptop at 6pm and trust your infrastructure works.
+                        </p>
+                        
+                        <p class="text-gray-700">
+                            I'm building this on BEAM because it's proven technology that lasts. I'm building it as a solo founder because 
+                            I want to prove you don't need VC money and a team of 20 to build reliable infrastructure.
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-3 mb-4">
+                        <p><strong>Connect:</strong></p>
+                        <ul class="ml-6 space-y-2">
+                            <li>• LinkedIn: <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="text-blue-600 underline">linkedin.com/in/rahmi-pruitt-a1bb4a127</a></li>
+                            <li>• YouTube: <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="text-blue-600 underline">@theblacktechexperience</a></li>
+                            <li>• Email: <a href="mailto:support@ezthrottle.network" class="text-blue-600 underline">support@ezthrottle.network</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-700">
+                            <strong>Fair warning:</strong> I'm learning as I go. There will be bugs. There will be outages. 
+                            But I'm committed to building this right, even if it takes longer. If you want polished enterprise software with 
+                            an SLA from day one, wait a year or use a bigger vendor. If you want to be part of building something real, I'm here.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Why should I trust a solo founder?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>You probably shouldn't trust blindly. But here's my pitch:</strong></p>
+                    
+                    <div class="space-y-4 mb-4">
+                        <div>
+                            <p class="font-semibold mb-2">1. I'm incentivized to keep this running</p>
+                            <p class="text-sm text-gray-700">This is my income. If EZThrottle goes down, I don't eat. I'm WAY more motivated than a BigCo engineer who gets paid whether the service works or not.</p>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold mb-2">2. I'm building on proven tech (BEAM)</p>
+                            <p class="text-sm text-gray-700">WhatsApp handled 2 billion users with 50 engineers. Discord scales to millions of concurrent users. BEAM is reliable — I just need to not screw it up.</p>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold mb-2">3. I'm transparent about limitations</p>
+                            <p class="text-sm text-gray-700">I'm not promising SLAs I can't deliver. I'm not claiming enterprise features I don't have. I'm being honest. That builds trust over time.</p>
+                        </div>
+                        
+                        <div>
+                            <p class="font-semibold mb-2">4. You can talk directly to me</p>
+                            <p class="text-sm text-gray-700">No support tickets that disappear into the void. No 3-day response times. Email me. I'll respond. (Might take 24 hours, but I'll respond.)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm">
+                            <strong>Start small:</strong> Try the free tier. Send 1,000 requests. See if it works. 
+                            If it does, scale up. If it doesn't, you risked nothing and learned something.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 text-center">
+            <h2 class="text-2xl font-bold mb-4">Still Have Questions?</h2>
+            <p class="mb-6">Email me directly. I'll answer honestly.</p>
+            <a href="mailto:support@ezthrottle.network" 
+               class="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                support@ezthrottle.network
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t py-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
+            <p class="font-semibold text-gray-900">© 2025 EZThrottle. The World's First API Aqueduct™</p>
+            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="hover:text-black">Home</a>
+                <a href="/faq" class="hover:text-black">FAQ</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" class="hover:text-black">SDKs</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-python" class="hover:text-black">Python SDK</a>
+                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Support</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
