@@ -392,33 +392,107 @@
         </div>
     </div>
 
-    <!-- Code Example -->
+  <!-- SDK Installation -->
     <div class="bg-white py-16">
-        <div class="max-w-4xl mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-4 text-center">Simple Integration</h2>
-            <p class="text-center text-gray-600 mb-8">One API, three SDKs. Pick your language.</p>
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Get Started in 30 Seconds</h2>
+                <p class="text-lg text-gray-600">Official SDKs for Python, Node.js, and Go</p>
+            </div>
             
-            <pre class="bg-slate-900 text-gray-100 p-6 rounded-lg overflow-x-auto shadow-lg"><code>from ezthrottle import EZThrottle
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Python -->
+                <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 hover:border-blue-500 transition-colors">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🐍</span>
+                        <h3 class="text-2xl font-bold">Python</h3>
+                    </div>
+                    <div class="bg-black text-green-400 p-3 rounded-lg font-mono text-sm mb-4">
+                        $ pip install ezthrottle
+                    </div>
+                    <pre class="bg-slate-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto mb-4"><code>from ezthrottle import EZThrottle
 
-client = EZThrottle(api_key="your_key")
+client = EZThrottle("your_key")
+resp = client.queue_request(
+    url="https://api.example.com",
+    webhook_url="https://webhook.site"
+)</code></pre>
+                    <a href="https://pypi.org/project/ezthrottle/" 
+                       target="_blank"
+                       class="block text-center text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                        View on PyPI →
+                    </a>
+                </div>
+                
+                <!-- Node.js -->
+                <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 hover:border-blue-500 transition-colors">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📦</span>
+                        <h3 class="text-2xl font-bold">Node.js</h3>
+                    </div>
+                    <div class="bg-black text-green-400 p-3 rounded-lg font-mono text-sm mb-4">
+                        $ npm install ezthrottle
+                    </div>
+                    <pre class="bg-slate-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto mb-4"><code>const { EZThrottle } = 
+  require('ezthrottle');
 
-# Automatically handles rate limiting
-response = client.request(
-    url="https://api.openai.com/v1/completions",
-    method="POST",
-    json_data={"prompt": "Hello, AI!"},
-    webhook_url="https://yourapp.com/webhook"
-)
+const client = new EZThrottle('key');
+const r = await client.queueRequest({
+  url: 'https://api.example.com',
+  webhookUrl: 'https://webhook.site'
+});</code></pre>
+                    <a href="https://www.npmjs.com/package/ezthrottle" 
+                       target="_blank"
+                       class="block text-center text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                        View on npm →
+                    </a>
+                </div>
+                
+                <!-- Go -->
+                <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 hover:border-blue-500 transition-colors">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🔷</span>
+                        <h3 class="text-2xl font-bold">Go</h3>
+                    </div>
+                    <div class="bg-black text-green-400 p-3 rounded-lg font-mono text-xs mb-4">
+                        <div>$ go get github.com/rjpruitt16/</div>
+                        <div class="ml-4">ezthrottle-sdk/go</div>
+                    </div>
+                    <pre class="bg-slate-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto mb-4"><code>import ez "github.com/rjpruitt16/
+  ezthrottle-sdk/go"
 
-# Returns immediately if no rate limit
-# Queues and webhooks if rate limited  
-# Intelligent routing ensures your floods never block others</code></pre>
-
-            <div class="mt-8 text-center">
-                <p class="text-gray-600">
-                    Available for <strong>Python</strong>, <strong>Node.js</strong>, and <strong>Go</strong>. 
-                    Install from PyPI, npm, or go get.
-                </p>
+client := ez.NewClient("key")
+resp, _ := client.QueueRequest(
+  &ez.QueueRequest{
+    URL: "https://api.example.com",
+    WebhookURL: "https://webhook.site",
+  }
+)</code></pre>
+                    <a href="https://github.com/rjpruitt16/ezthrottle-sdk" 
+                       target="_blank"
+                       class="block text-center text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                        View on GitHub →
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded">
+                <div class="flex items-start">
+                    <div class="text-2xl mr-4">💡</div>
+                    <div>
+                        <p class="font-semibold text-blue-900 mb-2">All SDKs support:</p>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm text-blue-800">
+                            <span>✓ Automatic rate limit handling</span>
+                            <span>✓ Retry-After support</span>
+                            <span>✓ Webhook delivery</span>
+                        </div>
+                        <a href="https://github.com/rjpruitt16/ezthrottle-sdk" 
+                           target="_blank"
+                           class="inline-block mt-4 text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                            View Full Documentation →
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
