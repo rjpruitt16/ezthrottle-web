@@ -914,92 +914,235 @@ resp2, _ := client.Torrent.Post(
     <div class="bg-white py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
+                <div class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
+                    CLOSED BETA
+                </div>
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                    Beta Pricing
+                    Enterprise Design Partners Needed
                 </h2>
                 <p class="text-xl text-gray-600">
-                    Design partners get special access. Free tier (1M requests) after first enterprise deal.
+                    We need production workloads to stress-test Layer 8 networking.
                 </p>
             </div>
             
-            <div class="max-w-3xl mx-auto">
-                <!-- Beta Access -->
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-2xl p-8 mb-8">
-                    <div class="text-center mb-6">
-                        <div class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
-                            CLOSED BETA
+            <!-- What We're Looking For -->
+            <div class="max-w-4xl mx-auto mb-16">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border-2 border-blue-200">
+                    <h3 class="text-2xl font-bold text-center mb-6 text-gray-900">
+                        Who We're Looking For
+                    </h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h4 class="font-bold text-lg mb-4 text-gray-900">✅ Perfect Fit:</h4>
+                            <ul class="space-y-3 text-gray-700">
+                                <li>→ <strong>AI agent platforms</strong> (multi-step workflows)</li>
+                                <li>→ <strong>Data pipelines</strong> (millions of API calls)</li>
+                                <li>→ <strong>E-commerce platforms</strong> (critical checkout flows)</li>
+                                <li>→ <strong>High-volume apps</strong> (100K+ requests/day)</li>
+                                <li>→ <strong>Production traffic</strong> (real users, real stakes)</li>
+                            </ul>
                         </div>
-                        <h3 class="text-3xl font-bold mb-2">Design Partner Program</h3>
-                        <p class="text-gray-600">Help us build Layer 8 networking</p>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-4 text-gray-900">❌ Not A Fit:</h4>
+                            <ul class="space-y-3 text-gray-700">
+                                <li>→ Personal projects (too small to stress-test)</li>
+                                <li>→ Tire-kickers (we need real workloads)</li>
+                                <li>→ "Checking it out" (need commitment)</li>
+                                <li>→ Zero tolerance for bugs (it's beta)</li>
+                                <li>→ Free forever seekers (we need revenue partners)</li>
+                            </ul>
+                        </div>
                     </div>
                     
-                    <div class="bg-white rounded-xl p-6 mb-6">
-                        <h4 class="font-bold text-xl mb-4">What You Get:</h4>
-                        <ul class="space-y-3 text-gray-700">
-                            <li>✓ <strong>STREAM protocol access</strong> (reliable delivery)</li>
-                            <li>✓ <strong>TORRENT early access</strong> (speed mode, 2 weeks)</li>
-                            <li>✓ <strong>Unlimited requests</strong> during beta (reasonable use)</li>
-                            <li>✓ <strong>Direct Slack channel</strong> with founder</li>
-                            <li>✓ <strong>Shape the roadmap</strong> (your feedback builds features)</li>
-                            <li>✓ <strong>Grandfathered pricing</strong> when we launch publicly</li>
-                        </ul>
+                    <div class="bg-white rounded-xl p-6 border-2 border-blue-300">
+                        <p class="text-center text-gray-700 mb-4">
+                            <strong>Translation:</strong> We're looking for serious companies with serious API problems. 
+                            If 429s and 500s are costing you real money, let's talk.
+                        </p>
+                        <p class="text-center text-sm text-gray-600">
+                            This is infrastructure. Not a side project. We need partners who get that.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Beta Partner Benefits -->
+            <div class="max-w-5xl mx-auto mb-16">
+                <h3 class="text-3xl font-bold text-center mb-8 text-gray-900">
+                    What Beta Partners Get
+                </h3>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Free Volume -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-300">
+                        <div class="text-center mb-4">
+                            <div class="text-4xl mb-2">🎁</div>
+                            <h4 class="font-bold text-xl text-gray-900">1M Requests Free</h4>
+                            <p class="text-sm text-gray-600 mt-2">$1,500 value</p>
+                        </div>
+                        <p class="text-sm text-gray-700 text-center">
+                            Enough volume to properly evaluate both STREAM and TORRENT protocols under load.
+                        </p>
                     </div>
                     
-                    <div class="bg-blue-900 text-white rounded-xl p-6 mb-6">
-                        <h4 class="font-bold text-lg mb-3">What We Need From You:</h4>
-                        <ul class="space-y-2 text-sm text-blue-100">
-                            <li>• <strong>Real production use</strong> (not tire-kickers)</li>
-                            <li>• <strong>Weekly feedback</strong> (what works, what doesn't)</li>
-                            <li>• <strong>Tolerance for bugs</strong> (it's beta, things break)</li>
-                            <li>• <strong>Case study permission</strong> (if it works well)</li>
-                        </ul>
+                    <!-- Direct Access -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-300">
+                        <div class="text-center mb-4">
+                            <div class="text-4xl mb-2">💬</div>
+                            <h4 class="font-bold text-xl text-gray-900">Direct Slack Channel</h4>
+                            <p class="text-sm text-gray-600 mt-2">With founder</p>
+                        </div>
+                        <p class="text-sm text-gray-700 text-center">
+                            Not support tickets. Real-time debugging with the person building this.
+                        </p>
                     </div>
                     
-                    <div class="text-center">
-                        <a href="mailto:support@ezthrottle.network?subject=Beta%20Design%20Partner%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20be%20a%20design%20partner%20for%20EZThrottle.%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhat%20I'm%20building%3A%20%0A%0AWhich%20APIs%20I'm%20calling%3A%20%0A%0ACurrent%20pain%20with%20rate%20limits%2F500s%3A%20%0A%0AExpected%20request%20volume%3A%20%0A%0AWhy%20Layer%208%20networking%20excites%20me%3A%20%0A%0AI%20understand%20this%20is%20beta%20software%3A%20Yes%0A%0AThanks!" 
-                           class="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-colors">
-                            Apply for Beta Access →
-                        </a>
-                        <p class="text-sm text-gray-600 mt-4">
-                            Limited spots. Prioritizing AI agents, data pipelines, and e-commerce.
+                    <!-- Shape Product -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-300">
+                        <div class="text-center mb-4">
+                            <div class="text-4xl mb-2">🎯</div>
+                            <h4 class="font-bold text-xl text-gray-900">Shape The Product</h4>
+                            <p class="text-sm text-gray-600 mt-2">Your feedback = features</p>
+                        </div>
+                        <p class="text-sm text-gray-700 text-center">
+                            Need something specific? We'll build it. Your use case drives the roadmap.
                         </p>
                     </div>
                 </div>
                 
-                <!-- Future Pricing -->
-                <div class="bg-gray-50 rounded-2xl p-8 border-2 border-gray-200">
-                    <h3 class="text-2xl font-bold mb-4 text-center">After Public Launch</h3>
-                    <p class="text-gray-600 text-center mb-6">
-                        Free tier (1M requests) unlocks after first $75K+ enterprise deal. Early partners get grandfathered in.
-                    </p>
+                <div class="mt-8 grid md:grid-cols-2 gap-6">
+                    <!-- Grandfathered Pricing -->
+                    <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 border-2 border-amber-300">
+                        <div class="flex items-center mb-3">
+                            <div class="text-3xl mr-3">💰</div>
+                            <h4 class="font-bold text-lg text-gray-900">Grandfathered Pricing</h4>
+                        </div>
+                        <p class="text-sm text-gray-700">
+                            Lock in early pricing forever. When we raise rates (we will), you don't pay more. 
+                            Early bet = permanent discount.
+                        </p>
+                    </div>
                     
-                    <div class="grid md:grid-cols-3 gap-4 text-sm">
-                        <div class="bg-white p-4 rounded-lg border border-gray-200">
-                            <p class="font-bold mb-2">Free Tier (Future)</p>
-                            <p class="text-2xl font-bold mb-2">$0</p>
-                            <p class="text-gray-600 text-xs">1M requests/month</p>
+                    <!-- Case Study -->
+                    <div class="bg-gradient-to-br from-rose-50 to-red-50 rounded-xl p-6 border-2 border-rose-300">
+                        <div class="flex items-center mb-3">
+                            <div class="text-3xl mr-3">📈</div>
+                            <h4 class="font-bold text-lg text-gray-900">Co-Marketing Rights</h4>
                         </div>
-                        <div class="bg-white p-4 rounded-lg border border-gray-200">
-                            <p class="font-bold mb-2">Pro (Estimated)</p>
-                            <p class="text-2xl font-bold mb-2">$499</p>
-                            <p class="text-gray-600 text-xs">~2M requests/month</p>
+                        <p class="text-sm text-gray-700">
+                            If it works well, we'll write a case study together. Your success story = our credibility. 
+                            Win-win marketing.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Future Pricing Preview -->
+            <div class="max-w-4xl mx-auto mb-16">
+                <h3 class="text-2xl font-bold text-center mb-6 text-gray-900">
+                    After Public Launch (For Reference)
+                </h3>
+                <p class="text-center text-gray-600 mb-8">
+                    This is what we'll charge once beta ends. Beta partners get better terms.
+                </p>
+                
+                <div class="bg-gray-50 rounded-2xl p-8 border-2 border-gray-200">
+                    <div class="text-center mb-8">
+                        <p class="text-5xl font-bold text-gray-900 mb-2">$0.0015</p>
+                        <p class="text-xl text-gray-600">per request</p>
+                        <p class="text-sm text-gray-500 mt-2">(Cheaper than sending an SMS)</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                            <p class="text-sm text-gray-600 mb-1">Small</p>
+                            <p class="text-2xl font-bold text-gray-900">$15</p>
+                            <p class="text-xs text-gray-500">10K requests/mo</p>
                         </div>
-                        <div class="bg-white p-4 rounded-lg border border-gray-200">
-                            <p class="font-bold mb-2">Enterprise</p>
-                            <p class="text-2xl font-bold mb-2">Custom</p>
-                            <p class="text-gray-600 text-xs">Unlimited + SLAs</p>
+                        <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                            <p class="text-sm text-gray-600 mb-1">Startup</p>
+                            <p class="text-2xl font-bold text-gray-900">$150</p>
+                            <p class="text-xs text-gray-500">100K requests/mo</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 text-center border border-blue-300 border-2">
+                            <p class="text-sm text-blue-600 mb-1 font-semibold">Growth</p>
+                            <p class="text-2xl font-bold text-gray-900">$1.5K</p>
+                            <p class="text-xs text-gray-500">1M requests/mo</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                            <p class="text-sm text-gray-600 mb-1">Scale</p>
+                            <p class="text-2xl font-bold text-gray-900">$15K</p>
+                            <p class="text-xs text-gray-500">10M requests/mo</p>
                         </div>
                     </div>
                     
-                    <p class="text-xs text-gray-500 text-center mt-6">
-                        Beta partners: Your pricing will be grandfathered when we raise rates.
+                    <p class="text-center text-sm text-gray-600">
+                        Volume discounts at 50M+. Enterprise custom pricing available.
                     </p>
+                </div>
+            </div>
+            
+            <!-- Apply CTA -->
+            <div class="max-w-3xl mx-auto">
+                <div class="bg-gradient-to-br from-slate-900 to-blue-900 text-white rounded-2xl p-8 text-center">
+                    <h3 class="text-3xl font-bold mb-4">Ready To Test Layer 8?</h3>
+                    <p class="text-xl text-blue-100 mb-6">
+                        We need 5-10 enterprise design partners with real production workloads.
+                    </p>
+                    
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6 text-left">
+                        <p class="font-semibold mb-3">Before you apply, ask yourself:</p>
+                        <ul class="space-y-2 text-sm text-blue-100">
+                            <li>✓ Do we have 100K+ API requests/day?</li>
+                            <li>✓ Are 429s and 500s costing us real money?</li>
+                            <li>✓ Can we tolerate beta bugs for 6-8 weeks?</li>
+                            <li>✓ Will we give weekly feedback?</li>
+                            <li>✓ Are we willing to be a reference customer?</li>
+                        </ul>
+                        <p class="text-sm text-blue-200 mt-4 italic">
+                            If you answered yes to all 5, we want to talk to you.
+                        </p>
+                    </div>
+                    
+                    <a href="mailto:support@ezthrottle.network?subject=Beta%20Enterprise%20Partner%20Request&body=Hi%2C%0A%0AWe'd%20like%20to%20be%20an%20enterprise%20design%20partner%20for%20EZThrottle.%0A%0A---%20Please%20fill%20out%20---%0A%0ACompany%20name%3A%20%0A%0AWhat%20we%20build%3A%20%0A%0ACurrent%20API%20volume%3A%20%0A%0AWhich%20APIs%20we%20call%3A%20%0A%0ACurrent%20pain%20with%20429s%2F500s%3A%20%0A%0AHow%20much%20it's%20costing%20us%3A%20%0A%0AWhy%20we're%20a%20good%20beta%20partner%3A%20%0A%0AOur%20engineering%20team%20size%3A%20%0A%0AWe%20understand%20this%20is%20beta%20and%20will%20have%20bugs%3A%20Yes%0A%0AWe'll%20provide%20weekly%20feedback%3A%20Yes%0A%0AWe're%20open%20to%20being%20a%20case%20study%20if%20it%20works%20well%3A%20Yes%0A%0AThanks!" 
+                       class="inline-block bg-white text-blue-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-50 transition-colors">
+                        Apply for Beta Access →
+                    </a>
+                    
+                    <p class="text-sm text-blue-200 mt-4">
+                        Limited to 5-10 partners. First-come, first-served for qualified companies.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Why Beta Partners -->
+            <div class="max-w-4xl mx-auto mt-16">
+                <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold text-center mb-6 text-gray-900">
+                        Why We Need Beta Partners
+                    </h3>
+                    <div class="prose prose-lg mx-auto text-gray-700">
+                        <p class="mb-4">
+                            <strong>Honest truth:</strong> EZThrottle works great in testing. But we're solo-founder-built infrastructure. 
+                            We need real production workloads to find the edge cases we haven't thought of.
+                        </p>
+                        <p class="mb-4">
+                            Your 429s and 500s will help us build better failover logic. Your burst traffic will help us tune 
+                            our queueing. Your multi-region needs will help us optimize routing.
+                        </p>
+                        <p class="mb-0">
+                            In exchange? You get infrastructure that actually works, direct access to the founder, and locked-in pricing 
+                            when we raise rates. We both win.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- CTA -->
+   <!-- CTA -->
     <div class="bg-black text-white py-20">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-4">Layer 8 Networking Is Here</h2>
