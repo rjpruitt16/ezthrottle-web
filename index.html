@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EZThrottle - The World's First API Aqueduct</title>
+    <title>EZThrottle - TCP for APIs</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50">
@@ -16,35 +16,57 @@
                 <div class="space-x-6 text-sm">
                     <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
                     <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
-                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
-                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                    <a href="mailto:support@ezthrottle.network" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Request Access</a>
                 </div>
             </div>
             
             <div class="text-center">
-                <h1 class="text-5xl font-bold text-gray-900 mb-4">
-                    EZThrottle
+                <div class="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-semibold text-sm mb-6">
+                    CLOSED BETA • EMAIL FOR ACCESS
+                </div>
+                
+                <h1 class="text-6xl font-bold text-gray-900 mb-6">
+                    TCP for APIs
                 </h1>
-                <p class="text-2xl text-gray-600 mb-4">
-                    The World's First API Aqueduct™
+                
+                <p class="text-3xl text-gray-700 mb-4 font-semibold">
+                    Layer 8 networking for your API calls
                 </p>
-                <p class="text-lg text-gray-500 mb-8">
-                    Ancient engineering principles. Modern infrastructure. Built to last.
+                
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+                    Not an API gateway. An <strong>API Aqueduct</strong>™ — bidirectional flow control 
+                    for requests and responses. Built on 40-year-old telecom-grade BEAM with a new Gleam.
                 </p>
-                <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-12">
-                    Intelligently route API requests through our distributed network while controlling flow to prevent overwhelming services. 
-                    Built on BEAM — the same 40-year-old technology powering WhatsApp, Discord, and the world's most reliable systems.
-                </p>
+                
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 max-w-2xl mx-auto mb-12 border-2 border-blue-200">
+                    <p class="text-2xl font-bold text-gray-900 mb-2">Two Protocols:</p>
+                    <div class="space-y-3 text-left">
+                        <div class="flex items-start">
+                            <span class="text-2xl mr-3">📦</span>
+                            <div>
+                                <p class="font-bold text-lg">STREAM (TCP)</p>
+                                <p class="text-gray-600">Reliable delivery. Queue 429s. Retry 500s. Guaranteed completion.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-2xl mr-3">⚡</span>
+                            <div>
+                                <p class="font-bold text-lg">TORRENT (UDP)</p>
+                                <p class="text-gray-600">Speed over reliability. Race 3 regions. First wins. Sub-80ms.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="space-x-4">
-                    <a href="/signup" 
-                       class="inline-block bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800">
-                        Start Free (10k requests)
-                    </a>
-                    <a href="/login" 
-                       class="inline-block border border-gray-300 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50">
-                        Login
+                    <a href="mailto:support@ezthrottle.network?subject=Beta%20Access%20Request" 
+                       class="inline-block bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 text-lg">
+                        Request Beta Access
                     </a>
                 </div>
+                <p class="text-sm text-gray-500 mt-4">
+                    Closed beta. Free tier (1M requests) coming after first enterprise customer.
+                </p>
             </div>
         </div>
     </div>
@@ -53,8 +75,8 @@
     <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
         <div class="max-w-4xl mx-auto">
             <p class="text-blue-900">
-                <strong>Early Access:</strong> Running 9 machines across 3 regions on Fly.io's edge network. 
-                Join early adopters building the future of API coordination. Full network effect coming soon.
+                <strong>Beta Status:</strong> Running 9 machines across 3 regions on Fly.io's edge network. 
+                Working with design partners to perfect the protocols before public launch.
             </p>
         </div>
     </div>
@@ -97,7 +119,7 @@
                     <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
                         <p class="text-sm font-semibold text-green-900 mb-2">✅ With EZThrottle:</p>
                         <ul class="text-sm text-green-800 space-y-1">
-                            <li>• Rate limit? We queue it</li>
+                            <li>• Rate limit? We queue it (STREAM)</li>
                             <li>• API down? We retry different region</li>
                             <li>• Workflow completes successfully</li>
                             <li>• Zero manual intervention</li>
@@ -147,7 +169,7 @@
                             <li>• Automatic rate limit coordination</li>
                             <li>• Resume from checkpoint on failure</li>
                             <li>• Regional failover for 500 errors</li>
-                            <li>• Job completes in 2 hours</li>
+                            <li>• Job completes faster, reliably</li>
                         </ul>
                     </div>
                     
@@ -222,88 +244,205 @@
                     Your APIs can fail. Your workflows won't.
                 </p>
                 <p class="text-gray-600 mb-6">
-                    Start with 10k requests free. Scale to millions with workflows.
+                    STREAM for reliability. TORRENT for speed. Layer 8 networking.
                 </p>
-                <a href="/signup" 
+                <a href="mailto:support@ezthrottle.network?subject=Beta%20Access%20Request" 
                    class="inline-block bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
-                    Start Free - No Credit Card
+                    Request Beta Access
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- What Is An Aqueduct -->
-    <div class="bg-gradient-to-br from-amber-50 via-stone-50 to-amber-50 py-16">
+    <!-- Not A Gateway, An Aqueduct -->
+    <div class="bg-gradient-to-br from-amber-50 via-stone-50 to-amber-50 py-20">
         <div class="max-w-5xl mx-auto px-4">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-4">What Is an API Aqueduct?</h2>
-                <p class="text-lg text-gray-600">Ancient infrastructure for modern problems</p>
+                <h2 class="text-4xl font-bold mb-4">Not an API Gateway. An API Aqueduct™</h2>
+                <p class="text-xl text-gray-600">Flow control in both directions</p>
             </div>
             
-            <div class="grid md:grid-cols-2 gap-8 mb-12">
-                <div class="bg-white rounded-lg p-8 shadow-md">
-                    <h3 class="text-xl font-bold mb-4 flex items-center">
-                        <span class="text-3xl mr-3">🏛️</span>
-                        Roman Aqueducts (19 BC)
-                    </h3>
-                    <ul class="space-y-3 text-gray-700">
-                        <li>✓ <strong>Routed water</strong> across hundreds of miles</li>
-                        <li>✓ <strong>Controlled flow</strong> with precise gradients</li>
-                        <li>✓ <strong>Multiple channels</strong> working together as a network</li>
-                        <li>✓ <strong>Buffered demand</strong> in distribution tanks (castellum)</li>
-                        <li>✓ <strong>Still working</strong> after 2,000 years</li>
-                    </ul>
-                    <p class="mt-4 text-sm text-gray-600 italic">
-                        The Aqua Virgo still supplies water to Rome's Trevi Fountain today.
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-lg p-8 shadow-md border-2 border-blue-500">
-                    <h3 class="text-xl font-bold mb-4 flex items-center">
-                        <span class="text-3xl mr-3">💻</span>
-                        EZThrottle (2025)
-                    </h3>
-                    <ul class="space-y-3 text-gray-700">
-                        <li>✓ <strong>Routes requests</strong> across distributed cluster via Syn</li>
-                        <li>✓ <strong>Controls flow rate</strong> (2 req/sec default, adaptive)</li>
-                        <li>✓ <strong>Multiple queues</strong> coordinated across machines</li>
-                        <li>✓ <strong>Buffers bursts</strong> in distributed in-memory queues</li>
-                        <li>✓ <strong>Built to last</strong> on BEAM (40 years proven)</li>
-                    </ul>
-                    <p class="mt-4 text-sm text-gray-600 italic">
-                        We're building 2,000-year infrastructure with technology that's already lasted 40.
-                    </p>
+            <div class="bg-white rounded-2xl p-8 shadow-xl mb-12">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 flex items-center">
+                            <span class="text-red-600 mr-3">❌</span>
+                            API Gateways
+                        </h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li>→ <strong>One direction:</strong> Client → Gateway → Server</li>
+                            <li>→ <strong>Synchronous:</strong> Block until response</li>
+                            <li>→ <strong>No flow control:</strong> Proxy and pray</li>
+                            <li>→ <strong>Stateless:</strong> No memory of failures</li>
+                            <li>→ <strong>Regional:</strong> Single point of failure</li>
+                        </ul>
+                        <p class="mt-4 text-sm text-gray-500 italic">
+                            AWS API Gateway, Kong, Nginx — great for routing, terrible for reliability.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 flex items-center">
+                            <span class="text-green-600 mr-3">✅</span>
+                            API Aqueducts
+                        </h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li>→ <strong>Bidirectional:</strong> Downstream (to API) + Upstream (to you)</li>
+                            <li>→ <strong>Asynchronous:</strong> Queue, deliver when ready</li>
+                            <li>→ <strong>Flow control:</strong> Smooth traffic, prevent 429s</li>
+                            <li>→ <strong>Stateful:</strong> Remember failures, retry smart</li>
+                            <li>→ <strong>Distributed:</strong> Self-healing network</li>
+                        </ul>
+                        <p class="mt-4 text-sm text-gray-600 italic">
+                            EZThrottle — built for reliability from the ground up.
+                        </p>
+                    </div>
                 </div>
             </div>
-
-            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-lg p-8">
-                <h3 class="text-2xl font-bold mb-4 text-center">The Aqueduct Advantage</h3>
+            
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl p-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">The Aqueduct Model</h3>
                 <div class="grid md:grid-cols-3 gap-6">
                     <div class="text-center">
                         <div class="text-4xl mb-3">🌊</div>
-                        <h4 class="font-semibold mb-2">Intelligent Routing</h4>
+                        <h4 class="font-semibold mb-2">Downstream Flow</h4>
                         <p class="text-blue-100 text-sm">
-                            Syn finds the least-busy queue across our cluster in real-time. 
-                            Your floods never block other customers. Fair, distributed coordination.
+                            Requests flow from you → EZThrottle → APIs. Smooth, controlled, rate-limited.
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">⬆️</div>
+                        <h4 class="font-semibold mb-2">Upstream Flow</h4>
+                        <p class="text-blue-100 text-sm">
+                            Responses flow from APIs → EZThrottle → You. Deduplicated, validated, delivered.
                         </p>
                     </div>
                     <div class="text-center">
                         <div class="text-4xl mb-3">⚖️</div>
-                        <h4 class="font-semibold mb-2">Flow Control</h4>
+                        <h4 class="font-semibold mb-2">Pressure Control</h4>
                         <p class="text-blue-100 text-sm">
-                            Smooth, predictable traffic to APIs. No bursts, no 429 errors. 
-                            Like aqueducts smoothed water pressure, we smooth request flow.
-                        </p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-4xl mb-3">🔗</div>
-                        <h4 class="font-semibold mb-2">Network Coordination</h4>
-                        <p class="text-blue-100 text-sm">
-                            BEAM's distributed coordination across machines. Fault-tolerant, 
-                            scalable, reliable. Infrastructure that just works.
+                            Buffer bursts, smooth peaks, prevent overload. Like Roman castellum tanks.
                         </p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Two Protocols -->
+    <div class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Two Protocols. One Network.</h2>
+                <p class="text-xl text-blue-200">
+                    Choose reliability or speed. We handle the rest.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- STREAM Protocol -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-2 border-blue-400">
+                    <div class="flex items-center mb-6">
+                        <span class="text-5xl mr-4">📦</span>
+                        <div>
+                            <h3 class="text-3xl font-bold">STREAM</h3>
+                            <p class="text-blue-200">Like TCP for APIs</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-lg mb-6 text-blue-100">
+                        Reliable delivery. Guaranteed completion. Your request will succeed, 
+                        even if it takes hours.
+                    </p>
+                    
+                    <div class="bg-blue-900/50 rounded-lg p-6 mb-6">
+                        <h4 class="font-bold mb-3 text-lg">How It Works:</h4>
+                        <ul class="space-y-2 text-sm text-blue-100">
+                            <li>• <strong>429 Rate Limit:</strong> Queue it. Deliver at optimal pace.</li>
+                            <li>• <strong>500 Error:</strong> Retry different region automatically.</li>
+                            <li>• <strong>Network split:</strong> Store and forward when healed.</li>
+                            <li>• <strong>Result:</strong> Your workflow completes. Always.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-900/30 border border-green-400 rounded-lg p-4">
+<pre class="text-sm text-green-200"><code>// STREAM: Guaranteed delivery
+const result = await ezthrottle.stream({
+  url: "https://api.openai.com/chat",
+  body: { prompt: "..." },
+  timeout: "1h" // How long to keep trying
+});
+// Returns: When completed (might be queued)
+// Guarantee: Will succeed or timeout
+</code></pre>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <p class="font-semibold mb-2">Perfect For:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">Workflows</span>
+                            <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">Batch jobs</span>
+                            <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">Data pipelines</span>
+                            <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">ETL</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- TORRENT Protocol -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-2 border-purple-400">
+                    <div class="flex items-center mb-6">
+                        <span class="text-5xl mr-4">⚡</span>
+                        <div>
+                            <h3 class="text-3xl font-bold">TORRENT</h3>
+                            <p class="text-purple-200">Like UDP for APIs</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-lg mb-6 text-purple-100">
+                        Speed over reliability. Race multiple regions. First response wins. 
+                        Sub-80ms latency.
+                    </p>
+                    
+                    <div class="bg-purple-900/50 rounded-lg p-6 mb-6">
+                        <h4 class="font-bold mb-3 text-lg">How It Works:</h4>
+                        <ul class="space-y-2 text-sm text-purple-100">
+                            <li>• <strong>Parallel execution:</strong> Send to 3 regions simultaneously.</li>
+                            <li>• <strong>First wins:</strong> Return fastest response, cancel others.</li>
+                            <li>• <strong>No retries:</strong> Fast or fail. No queueing.</li>
+                            <li>• <strong>Result:</strong> Sub-80ms responses. Feels instant.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-900/30 border border-green-400 rounded-lg p-4">
+<pre class="text-sm text-green-200"><code>// TORRENT: Fastest response
+const result = await ezthrottle.torrent({
+  url: "https://api.anthropic.com/complete",
+  body: { prompt: "..." },
+  regions: ["us-east", "us-west", "eu-west"]
+});
+// Returns: Immediately (first to respond)
+// Guarantee: Speed, not reliability
+</code></pre>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <p class="font-semibold mb-2">Perfect For:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-purple-600 px-3 py-1 rounded-full text-sm">Chat UIs</span>
+                            <span class="bg-purple-600 px-3 py-1 rounded-full text-sm">Autocomplete</span>
+                            <span class="bg-purple-600 px-3 py-1 rounded-full text-sm">Search</span>
+                            <span class="bg-purple-600 px-3 py-1 rounded-full text-sm">Real-time apps</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center">
+                <p class="text-2xl font-bold mb-4">Use Both in the Same App</p>
+                <p class="text-lg text-blue-100 max-w-2xl mx-auto">
+                    STREAM for your background jobs. TORRENT for your interactive UI. 
+                    One network. One bill. Your choice.
+                </p>
             </div>
         </div>
     </div>
@@ -313,15 +452,15 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold mb-4">How It Works</h2>
-                <p class="text-xl text-gray-600">Distributed rate limiting with BEAM reliability</p>
+                <p class="text-xl text-gray-600">Layer 8 networking with BEAM reliability</p>
             </div>
             
             <div class="grid md:grid-cols-2 gap-12 mb-16">
                 <div>
-                    <h3 class="text-2xl font-bold mb-6 text-gray-900">The Problem: Rate Limits Kill APIs</h3>
+                    <h3 class="text-2xl font-bold mb-6 text-gray-900">The Problem: APIs Have No Flow Control</h3>
                     
                     <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-6 rounded">
-                        <h4 class="font-bold text-red-900 mb-3">Without EZThrottle:</h4>
+                        <h4 class="font-bold text-red-900 mb-3">Without Layer 8:</h4>
                         <pre class="text-sm text-red-800 overflow-x-auto"><code>// Your code makes 100 requests/sec
 for (let i = 0; i < items.length; i++) {
     await api.post('/process', items[i])
@@ -337,7 +476,7 @@ for (let i = 0; i < items.length; i++) {
                         <h4 class="font-bold text-green-900 mb-3">With EZThrottle:</h4>
                         <pre class="text-sm text-green-800 overflow-x-auto"><code>// Same code, proxied through EZThrottle
 for (let i = 0; i < items.length; i++) {
-    await ezthrottle.post('/process', items[i])
+    await ezthrottle.stream.post('/process', items[i])
     // ✓ Automatically queued if rate limited
     // ✓ Retried on failures
 }</code></pre>
@@ -371,23 +510,23 @@ for (let i = 0; i < items.length; i++) {
                             <div class="flex items-start">
                                 <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">3</div>
                                 <div>
-                                    <h4 class="font-semibold mb-1">Rate Limit Check</h4>
-                                    <p class="text-sm text-gray-600">Token bucket algorithm (configurable rate: 2/sec default)</p>
+                                    <h4 class="font-semibold mb-1">Protocol Selection</h4>
+                                    <p class="text-sm text-gray-600">STREAM (reliable) or TORRENT (fast) based on your call</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start">
                                 <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">4</div>
                                 <div>
-                                    <h4 class="font-semibold mb-1">Queue or Forward</h4>
-                                    <p class="text-sm text-gray-600">Within limit? Forward immediately. Over limit? Queue in memory (BEAM process)</p>
+                                    <h4 class="font-semibold mb-1">Queue or Race</h4>
+                                    <p class="text-sm text-gray-600">STREAM: Queue if needed. TORRENT: Race 3 regions parallel.</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start">
                                 <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">5</div>
                                 <div>
-                                    <h4 class="font-semibold mb-1">Response & Webhook</h4>
+                                    <h4 class="font-semibold mb-1">Response & Delivery</h4>
                                     <p class="text-sm text-gray-600">Get response, trigger webhook if configured, return to client</p>
                                 </div>
                             </div>
@@ -411,7 +550,7 @@ for (let i = 0; i < items.length; i++) {
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold mb-4">Official SDKs</h2>
-                <p class="text-lg text-gray-600">Official SDKs for Python, Node.js, and Go</p>
+                <p class="text-lg text-gray-600">Python, Node.js, and Go SDKs for both protocols</p>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8 mb-12">
@@ -427,9 +566,18 @@ for (let i = 0; i < items.length; i++) {
                     <pre class="bg-slate-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto mb-4"><code>from ezthrottle import EZThrottle
 
 client = EZThrottle("your_key")
-resp = client.queue_request(
-    url="https://api.example.com",
-    webhook_url="https://webhook.site"
+
+# STREAM: Reliable delivery
+resp = client.stream.post(
+    url="https://api.openai.com/chat",
+    json={"prompt": "..."}
+)
+
+# TORRENT: Fast delivery
+resp = client.torrent.post(
+    url="https://api.anthropic.com/complete",
+    json={"prompt": "..."},
+    regions=["us-east", "us-west", "eu"]
 )</code></pre>
                     <a href="https://pypi.org/project/ezthrottle/" 
                        target="_blank"
@@ -450,10 +598,19 @@ resp = client.queue_request(
                     <pre class="bg-slate-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto mb-4"><code>const { EZThrottle } = 
   require('ezthrottle');
 
-const client = new EZThrottle('key');
-const r = await client.queueRequest({
-  url: 'https://api.example.com',
-  webhookUrl: 'https://webhook.site'
+const ez = new EZThrottle('key');
+
+// STREAM: Reliable
+const r1 = await ez.stream.post({
+  url: 'https://api.openai.com/chat',
+  json: { prompt: '...' }
+});
+
+// TORRENT: Fast
+const r2 = await ez.torrent.post({
+  url: 'https://api.anthropic.com',
+  json: { prompt: '...' },
+  regions: ['us-east', 'us-west']
 });</code></pre>
                     <a href="https://www.npmjs.com/package/ezthrottle" 
                        target="_blank"
@@ -469,17 +626,24 @@ const r = await client.queueRequest({
                         <h3 class="text-2xl font-bold">Go</h3>
                     </div>
                     <div class="bg-black text-green-400 p-3 rounded-lg font-mono text-xs mb-4">
-                        <div>$ go get github.com/rjpruitt16/ezthrottle-go</div>
+                        $ go get github.com/rjpruitt16/ezthrottle-go
                     </div>
                     <pre class="bg-slate-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto mb-4"><code>import ez "github.com/rjpruitt16/
   ezthrottle-sdk/go"
 
 client := ez.NewClient("key")
-resp, _ := client.QueueRequest(
-  &ez.QueueRequest{
-    URL: "https://api.example.com",
-    WebhookURL: "https://webhook.site",
-  }
+
+// STREAM: Reliable
+resp1, _ := client.Stream.Post(
+  "https://api.openai.com/chat",
+  map[string]any{"prompt": "..."},
+)
+
+// TORRENT: Fast
+resp2, _ := client.Torrent.Post(
+  "https://api.anthropic.com",
+  map[string]any{"prompt": "..."},
+  []string{"us-east", "us-west"},
 )</code></pre>
                     <a href="https://github.com/rjpruitt16/ezthrottle-go" 
                        target="_blank"
@@ -495,9 +659,12 @@ resp, _ := client.QueueRequest(
                     <div>
                         <p class="font-semibold text-blue-900 mb-2">All SDKs support:</p>
                         <div class="grid md:grid-cols-3 gap-4 text-sm text-blue-800">
-                            <span>✓ Automatic rate limit handling</span>
-                            <span>✓ Retry-After support</span>
+                            <span>✓ STREAM protocol (reliable)</span>
+                            <span>✓ TORRENT protocol (fast)</span>
                             <span>✓ Webhook delivery</span>
+                            <span>✓ Regional failover</span>
+                            <span>✓ Automatic retries</span>
+                            <span>✓ Rate limit handling</span>
                         </div>
                         <a href="https://github.com/rjpruitt16/ezthrottle-sdk" 
                            target="_blank"
@@ -510,231 +677,180 @@ resp, _ := client.QueueRequest(
         </div>
     </div>
 
-    <!-- What's Next -->
-    <div class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20">
+    <!-- Built on BEAM with Gleam -->
+    <div class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">What We're Working On Next</h2>
-                <p class="text-xl text-blue-200">
-                    Building the future of resilient API infrastructure
+                <h2 class="text-4xl font-bold text-white mb-4">
+                    Built on Telecom-Grade BEAM
+                </h2>
+                <p class="text-2xl text-purple-200">
+                    With a new Gleam ✨
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-2 gap-8 mb-12">
-                
-                <!-- Regional Failover -->
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                    <div class="flex items-center mb-6">
-                        <div class="bg-blue-500 text-white text-xl font-bold px-4 py-2 rounded-lg mr-4">
-                            Next
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Why BEAM?</h3>
+                    <div class="space-y-4">
+                        <div class="bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded">
+                            <p class="font-semibold text-blue-200 mb-1">40 Years of Telecom Reliability</p>
+                            <p class="text-sm text-blue-100">
+                                Erlang/OTP has powered telecom systems since 1986. 99.9999999% uptime. 
+                                Nine nines. Proven at scale.
+                            </p>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold">Regional Failover</h3>
-                            <p class="text-blue-200 text-sm">Shipping in 2 weeks</p>
+                        
+                        <div class="bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded">
+                            <p class="font-semibold text-blue-200 mb-1">WhatsApp: 2 Billion Users on BEAM</p>
+                            <p class="text-sm text-blue-100">
+                                50 engineers serving 2 billion users. All on BEAM. If it scales for them, 
+                                it scales for your API calls.
+                            </p>
                         </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h4 class="font-semibold mb-3 text-lg">The Problem:</h4>
-                        <ul class="space-y-2 text-blue-100">
-                            <li>• AWS us-east-1 goes down (happens regularly)</li>
-                            <li>• API deployments introduce bugs</li>
-                            <li>• Regional outages return 500 errors</li>
-                            <li>• Your requests fail, users see errors</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h4 class="font-semibold mb-3 text-lg">Our Solution:</h4>
-                        <div class="bg-green-900/30 border border-green-500 rounded-lg p-4">
-<pre class="text-sm text-green-200"><code># Automatic regional failover
-ezthrottle.call(
-    "https://api.example.com/...",
-    failover_regions=["us-east", "us-west", "eu-west"]
-)
-# Tries us-east first
-# 500 error? → Tries us-west automatically
-# Still failing? → Tries eu-west
-# Succeeds in milliseconds instead of failing
-</code></pre>
+                        
+                        <div class="bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded">
+                            <p class="font-semibold text-blue-200 mb-1">Discord: 150M Concurrent Connections</p>
+                            <p class="text-sm text-blue-100">
+                                Real-time messaging at insane scale. BEAM handles it. Your API requests? 
+                                Child's play.
+                            </p>
                         </div>
-                    </div>
-                    
-                    <div class="bg-blue-900/50 rounded-lg p-4 border border-blue-400">
-                        <p class="text-sm font-semibold mb-2">🌍 How It Works:</p>
-                        <p class="text-sm text-blue-100">
-                            When APIs return 500 errors, we automatically route your request to healthy regions 
-                            via Fly.io's global edge network. Zero downtime. Zero configuration.
-                        </p>
                     </div>
                 </div>
                 
-                <!-- Static Workflows -->
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                    <div class="flex items-center mb-6">
-                        <div class="bg-purple-500 text-white text-xl font-bold px-4 py-2 rounded-lg mr-4">
-                            Soon
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Why Gleam?</h3>
+                    <div class="space-y-4">
+                        <div class="bg-purple-900/30 border-l-4 border-purple-400 p-4 rounded">
+                            <p class="font-semibold text-purple-200 mb-1">Type Safety on BEAM</p>
+                            <p class="text-sm text-purple-100">
+                                Rust-like type system. No runtime errors. Catch bugs at compile time. 
+                                Ship with confidence.
+                            </p>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold">Static Workflows</h3>
-                            <p class="text-blue-200 text-sm">After regional failover</p>
+                        
+                        <div class="bg-purple-900/30 border-l-4 border-purple-400 p-4 rounded">
+                            <p class="font-semibold text-purple-200 mb-1">Modern DX, Proven Runtime</p>
+                            <p class="text-sm text-purple-100">
+                                Gleam compiles to BEAM bytecode. Best of both worlds: modern language, 
+                                40-year-old battle-tested runtime.
+                            </p>
                         </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h4 class="font-semibold mb-3 text-lg">The Problem:</h4>
-                        <ul class="space-y-2 text-blue-100">
-                            <li>• Multi-step API calls fail mid-workflow</li>
-                            <li>• Manual retry logic everywhere</li>
-                            <li>• No coordination between steps</li>
-                            <li>• Lost state on failures</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h4 class="font-semibold mb-3 text-lg">Our Solution:</h4>
-                        <div class="bg-green-900/30 border border-green-500 rounded-lg p-4">
-<pre class="text-sm text-green-200"><code># Define multi-step workflow
-workflow = ezthrottle.create_workflow({
-    "steps": [
-        {"name": "charge", "api": "stripe", "critical": True},
-        {"name": "fulfill", "api": "shipstation", "retry": "1h"},
-        {"name": "email", "api": "sendgrid", "non_blocking": True}
-    ]
-})
-
-# Execute - all steps guaranteed
-result = workflow.execute(order_data)
-</code></pre>
+                        
+                        <div class="bg-purple-900/30 border-l-4 border-purple-400 p-4 rounded">
+                            <p class="font-semibold text-purple-200 mb-1">Built for Concurrency</p>
+                            <p class="text-sm text-purple-100">
+                                Actors, supervision trees, distributed coordination. BEAM's primitives 
+                                + Gleam's safety = reliable infrastructure.
+                            </p>
                         </div>
-                    </div>
-                    
-                    <div class="bg-blue-900/50 rounded-lg p-4 border border-blue-400">
-                        <p class="text-sm font-semibold mb-2">🔄 Key Features:</p>
-                        <p class="text-sm text-blue-100">
-                            Automatic retries, checkpointing, idempotency guarantees, and dependency management. 
-                            Your workflows complete even when individual steps fail.
-                        </p>
                     </div>
                 </div>
-                
             </div>
             
-            <!-- Roadmap Preview -->
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-center">
-                <h3 class="text-3xl font-bold mb-4">The Vision</h3>
-                <p class="text-xl text-blue-100 mb-6 max-w-3xl mx-auto">
-                    Every API call should succeed. Every workflow should complete. 
-                    We're building the infrastructure layer that makes this possible.
+            <div class="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center">
+                <p class="text-2xl font-bold text-center mb-4">
+                    "BEAM with a new Gleam" isn't just marketing.
                 </p>
-                
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div>
-                        <div class="text-4xl mb-3">✅</div>
-                        <h4 class="font-semibold mb-2">Today</h4>
-                        <p class="text-sm text-blue-100">
-                            Distributed rate limiting across global edge network
-                        </p>
-                    </div>
-                    <div>
-                        <div class="text-4xl mb-3">🚀</div>
-                        <h4 class="font-semibold mb-2">Next Month</h4>
-                        <p class="text-sm text-blue-100">
-                            Regional failover + static workflows for guaranteed completion
-                        </p>
-                    </div>
-                    <div>
-                        <div class="text-4xl mb-3">🌟</div>
-                        <h4 class="font-semibold mb-2">This Year</h4>
-                        <p class="text-sm text-blue-100">
-                            Intelligent routing, latency optimization, dynamic workflows
-                        </p>
-                    </div>
-                </div>
-                
-                <a href="/signup" 
-                   class="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
-                    Join Early Adopters →
-                </a>
-                <p class="text-sm text-blue-200 mt-4">
-                    Early customers get grandfathered pricing when we raise rates
+                <p class="text-lg text-blue-100">
+                    It's 40 years of telecom reliability + modern type safety. 
+                    Infrastructure built to last 2,000 years, like Roman aqueducts.
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- Workflow Preview -->
-    <div class="bg-gradient-to-r from-purple-50 to-pink-50 py-16">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <div class="inline-block bg-purple-100 text-purple-700 px-4 py-2 rounded-full font-semibold text-sm mb-4">
-                    COMING SOON
-                </div>
-                <h2 class="text-3xl font-bold mb-4">Eventually Consistent Workflows</h2>
-                <p class="text-lg text-gray-700">
-                    Not every task needs to be instant. Some should run overnight. Reliably. Autonomously.
+    <!-- What's Next Section -->
+    <div class="bg-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">What We're Building Next</h2>
+                <p class="text-xl text-gray-600">
+                    Layer 8 is just the beginning
                 </p>
             </div>
-
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h3 class="font-bold text-xl mb-4">Workflows You Can Trust to Eventually Finish</h3>
-                <p class="text-gray-700 mb-6">
-                    Research that runs while you sleep. Content that generates during meetings. 
-                    Data collection that completes in the background. The aqueduct coordinates everything.
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                
+                <!-- STREAM Protocol (Shipping) -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 border-2 border-blue-300">
+                    <div class="bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full inline-block mb-4">
+                        SHIPPING NOW
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">STREAM Protocol</h3>
+                    <p class="text-gray-700 mb-4">TCP for APIs. Reliable delivery.</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li>• Automatic 429 queueing</li>
+                        <li>• Regional 500 failover</li>
+                        <li>• Guaranteed completion</li>
+                        <li>• Webhook delivery</li>
+                    </ul>
+                </div>
+                
+                <!-- TORRENT Protocol (Next) -->
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 border-2 border-purple-400 shadow-lg">
+                    <div class="bg-purple-500 text-white text-sm font-bold px-3 py-1 rounded-full inline-block mb-4">
+                        NEXT (2 WEEKS)
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">TORRENT Protocol</h3>
+                    <p class="text-gray-700 mb-4">UDP for APIs. Speed over reliability.</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li>• Race 3 regions simultaneously</li>
+                        <li>• First response wins</li>
+                        <li>• Sub-80ms latency</li>
+                        <li>• Perfect for real-time UIs</li>
+                    </ul>
+                </div>
+                
+                <!-- Streams of Intelligence (Future) -->
+                <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-8 border-2 border-indigo-300">
+                    <div class="bg-indigo-500 text-white text-sm font-bold px-3 py-1 rounded-full inline-block mb-4">
+                        FUTURE
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">Streams of Intelligence</h3>
+                    <p class="text-gray-700 mb-4">Bidirectional streaming for AI agents.</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li>• Long-running agent workflows</li>
+                        <li>• Bidirectional state sync</li>
+                        <li>• Checkpoint & resume</li>
+                        <li>• Multi-day operations</li>
+                    </ul>
+                </div>
+                
+            </div>
+            
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl p-8 text-center">
+                <h3 class="text-3xl font-bold mb-4">The Vision: Layer 8 Networking</h3>
+                <p class="text-xl text-blue-100 mb-6 max-w-3xl mx-auto">
+                    APIs are the nervous system of modern software. They need their own protocol layer. 
+                    We're building it.
                 </p>
                 
-                <div class="bg-gray-50 rounded-lg p-6 font-mono text-sm overflow-x-auto mb-6">
-<code class="text-gray-800">{
-  "workflow": "competitor_research",
-  "steps": [
-    {"search": "Find top 5 API infrastructure companies"},
-    {"scrape": "Extract pricing from each site"},  
-    {"analyze": "Compare features and positioning"},
-    {"generate": "Create comparison spreadsheet"}
-  ],
-  "webhook": "https://yourapp.com/results"
-}
-
-// Submit once. Go to sleep.
-// Wake up to completed research.</code>
+                <div class="grid md:grid-cols-3 gap-6 mb-8 text-sm">
+                    <div>
+                        <div class="text-3xl mb-2">📦</div>
+                        <h4 class="font-semibold mb-1">STREAM</h4>
+                        <p class="text-blue-200">Reliability. Like TCP.</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl mb-2">⚡</div>
+                        <h4 class="font-semibold mb-1">TORRENT</h4>
+                        <p class="text-blue-200">Speed. Like UDP.</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl mb-2">🌊</div>
+                        <h4 class="font-semibold mb-1">INTELLIGENCE</h4>
+                        <p class="text-blue-200">State. Like... nothing that exists.</p>
+                    </div>
                 </div>
-
-                <p class="text-gray-600 text-sm italic">
-                    The workflow runner orchestrates all rate limiting, retries, and coordination. 
-                    You define the goal. We handle the execution.
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="bg-white rounded-lg p-6 shadow border-l-4 border-blue-500">
-                    <div class="text-3xl mb-3">🔬</div>
-                    <h4 class="font-semibold mb-2">Research Agents</h4>
-                    <p class="text-sm text-gray-600">
-                        Collect data from dozens of sources. Takes hours. You're not waiting around.
-                    </p>
-                </div>
-                <div class="bg-white rounded-lg p-6 shadow border-l-4 border-purple-500">
-                    <div class="text-3xl mb-3">📝</div>
-                    <h4 class="font-semibold mb-2">Content Pipelines</h4>
-                    <p class="text-sm text-gray-600">
-                        Generate, optimize, translate, publish. Multi-step workflows that just work.
-                    </p>
-                </div>
-                <div class="bg-white rounded-lg p-6 shadow border-l-4 border-pink-500">
-                    <div class="text-3xl mb-3">📊</div>
-                    <h4 class="font-semibold mb-2">Data Enrichment</h4>
-                    <p class="text-sm text-gray-600">
-                        Process 1,000 leads overnight. Structured data. Reliable results. Done.
-                    </p>
-                </div>
-            </div>
-
-            <div class="mt-8 text-center bg-white rounded-lg p-6 shadow">
-                <p class="text-gray-700 mb-4">
-                    <strong>Want early access to workflow runners?</strong>
-                </p>
-                <p class="text-sm text-gray-600">
-                    Start with reliable rate limiting today. We'll invite early adopters to test workflows as we build them.
+                
+                <a href="mailto:support@ezthrottle.network?subject=Beta%20Access" 
+                   class="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                    Request Beta Access →
+                </a>
+                <p class="text-sm text-blue-200 mt-4">
+                    Early design partners shape the roadmap
                 </p>
             </div>
         </div>
@@ -765,17 +881,17 @@ result = workflow.execute(order_data)
             <h2 class="text-3xl font-bold mb-6">Open & Transparent</h2>
             
             <p class="text-xl text-gray-700 mb-8">
-                Our landing page, FAQ, and trial process are all open source on GitHub.
+                Our landing page, FAQ, and beta process are all open source on GitHub.
             </p>
             
             <div class="bg-white rounded-lg p-8 shadow-sm text-left mb-8">
-                <h3 class="font-bold text-lg mb-4">🔍 See Exactly How Trial Requests Work</h3>
+                <h3 class="font-bold text-lg mb-4">🔍 See Exactly How Beta Access Works</h3>
                 <p class="text-gray-700 mb-4">
-                    We use email templates for trial requests. No hidden questions, no surprises. 
+                    We use email templates for beta requests. No hidden questions, no surprises. 
                     <strong>You can see the exact template before you apply.</strong>
                 </p>
                 <p class="text-sm text-gray-600 italic">
-                    "We're gambling on you. We want to know who we're betting on."
+                    "We're building with design partners. We want to know who we're building with."
                 </p>
             </div>
             
@@ -789,133 +905,116 @@ result = workflow.execute(order_data)
             </a>
             
             <p class="mt-6 text-sm text-gray-600">
-                Read the README • See trial email template • Fork if you want
+                Read the README • See beta email template • Fork if you want
             </p>
         </div>
     </div>
  
     <!-- Pricing -->
-    <div class="bg-white py-16">
-        <div class="max-w-7xl mx-auto px-4">
+    <div class="bg-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-4">Simple, Transparent Pricing</h2>
-                <p class="text-xl text-gray-600">Start free. Scale as you grow.</p>
-            </div>
-            
-            <div class="grid md:grid-cols-5 gap-6 mb-8">
-                <!-- Free Tier -->
-                <div class="border-2 border-gray-200 rounded-lg p-6">
-                    <h3 class="text-xl font-bold mb-2">Free</h3>
-                    <p class="text-gray-600 mb-4 text-sm">Get started</p>
-                    <p class="text-3xl font-bold mb-4">$0<span class="text-sm font-normal text-gray-600">/mo</span></p>
-                    <ul class="space-y-2 mb-6 text-sm text-gray-700">
-                        <li>✓ 10k requests/mo</li>
-                        <li>✓ All SDKs</li>
-                        <li>✓ Webhook delivery</li>
-                        <li>✓ Community support</li>
-                    </ul>
-                    <button class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
-                        Get Started
-                    </button>
-                </div>
-                
-                <!-- Starter Tier -->
-                <div class="border-2 border-gray-200 rounded-lg p-6">
-                    <h3 class="text-xl font-bold mb-2">Starter</h3>
-                    <p class="text-gray-600 mb-4 text-sm">Small projects</p>
-                    <p class="text-3xl font-bold mb-4">$50<span class="text-sm font-normal text-gray-600">/mo</span></p>
-                    <ul class="space-y-2 mb-6 text-sm text-gray-700">
-                        <li>✓ 100k requests/mo</li>
-                        <li>✓ All SDKs</li>
-                        <li>✓ Priority routing</li>
-                        <li>✓ Email support</li>
-                    </ul>
-                    <a href="mailto:support@ezthrottle.network?subject=Starter%20Tier%20Trial%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20request%20a%20trial%20of%20the%20Starter%20tier%20(100k%20requests%2Fmonth).%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhy%20I%20need%20EZThrottle%3A%20%0A%0AWhat%20APIs%20I'm%20rate%20limited%20on%3A%20%0A%0AHow%20I'll%20use%20100k%20requests%20to%20evaluate%3A%20%0A%0AI%20understand%20EZThrottle%20is%20immature%20but%20powerful%20-%20I'll%20use%20it%20carefully%3A%20Yes%0A%0AThanks!" 
-                       class="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 text-center">
-                        Request Trial
-                    </a>
-                </div>
-                
-                <!-- Growth Tier -->
-                <div class="border-2 border-gray-200 rounded-lg p-6">
-                    <h3 class="text-xl font-bold mb-2">Growth</h3>
-                    <p class="text-gray-600 mb-4 text-sm">Growing teams</p>
-                    <p class="text-3xl font-bold mb-4">$200<span class="text-sm font-normal text-gray-600">/mo</span></p>
-                    <ul class="space-y-2 mb-6 text-sm text-gray-700">
-                        <li>✓ 500k requests/mo</li>
-                        <li>✓ Priority routing</li>
-                        <li>✓ Advanced dashboard</li>
-                        <li>✓ Email support (12hr)</li>
-                    </ul>
-                    <a href="mailto:support@ezthrottle.network?subject=Growth%20Tier%20Trial%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20request%20a%20trial%20of%20the%20Growth%20tier%20(500k%20requests%2Fmonth).%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhy%20I%20need%20EZThrottle%3A%20%0A%0AWhat%20APIs%20I'm%20rate%20limited%20on%3A%20%0A%0AHow%20I'll%20use%20500k%20requests%20to%20evaluate%3A%20%0A%0AI%20understand%20EZThrottle%20is%20immature%20but%20powerful%20-%20I'll%20use%20it%20carefully%3A%20Yes%0A%0AThanks!" 
-                       class="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 text-center">
-                        Request Trial
-                    </a>
-                </div>
-                
-                <!-- Pro Tier -->
-                <div class="border-2 border-blue-500 rounded-lg p-6 relative shadow-lg">
-                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                        POPULAR
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Pro</h3>
-                    <p class="text-gray-600 mb-4 text-sm">Production scale</p>
-                    <p class="text-3xl font-bold mb-4">$499<span class="text-sm font-normal text-gray-600">/mo</span></p>
-                    <ul class="space-y-2 mb-6 text-sm text-gray-700">
-                        <li>✓ 2M requests/mo</li>
-                        <li>✓ Priority routing</li>
-                        <li>✓ Advanced dashboard</li>
-                        <li>✓ Email support (24hr)</li>
-                    </ul>
-                    <a href="mailto:support@ezthrottle.network?subject=Pro%20Tier%20Trial%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20request%20a%20trial%20of%20the%20Pro%20tier%20(2M%20requests%2Fmonth).%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhy%20I%20need%20EZThrottle%3A%20%0A%0AWhat%20APIs%20I'm%20rate%20limited%20on%3A%20%0A%0AHow%20I'll%20use%202M%20requests%20to%20evaluate%3A%20%0A%0AI%20understand%20EZThrottle%20is%20immature%20but%20powerful%20-%20I'll%20use%20it%20carefully%3A%20Yes%0A%0AThanks!" 
-                       class="block w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 text-center">
-                        Request Trial
-                    </a>
-                </div>
-                
-                <!-- Enterprise Tier -->
-                <div class="border-2 border-gray-200 rounded-lg p-6">
-                    <h3 class="text-xl font-bold mb-2">Enterprise</h3>
-                    <p class="text-gray-600 mb-4 text-sm">Custom needs</p>
-                    <p class="text-3xl font-bold mb-4">Custom</p>
-                    <ul class="space-y-2 mb-6 text-sm text-gray-700">
-                        <li>✓ Unlimited requests</li>
-                        <li>✓ Dedicated machines</li>
-                        <li>✓ Custom SLAs</li>
-                        <li>✓ Priority support</li>
-                    </ul>
-                    <button class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
-                        Contact Sales
-                    </button>
-                </div>
-            </div>
-
-            <p class="text-center text-sm text-gray-500 mt-8">
-                All plans include access to workflow runners when they launch. Early adopters get priority access.
-            </p>
-            
-            <div class="mt-8 text-center">
-                <p class="text-sm text-gray-600">
-                    <strong>Overage on paid tiers:</strong> $0.0005 per request over quota. We don't block — we charge fees to discourage proxy usage. Use EZThrottle for overflow, not as your API gateway.
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    Beta Pricing
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Design partners get special access. Free tier (1M requests) after first enterprise deal.
                 </p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto">
+                <!-- Beta Access -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-2xl p-8 mb-8">
+                    <div class="text-center mb-6">
+                        <div class="inline-block bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
+                            CLOSED BETA
+                        </div>
+                        <h3 class="text-3xl font-bold mb-2">Design Partner Program</h3>
+                        <p class="text-gray-600">Help us build Layer 8 networking</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 mb-6">
+                        <h4 class="font-bold text-xl mb-4">What You Get:</h4>
+                        <ul class="space-y-3 text-gray-700">
+                            <li>✓ <strong>STREAM protocol access</strong> (reliable delivery)</li>
+                            <li>✓ <strong>TORRENT early access</strong> (speed mode, 2 weeks)</li>
+                            <li>✓ <strong>Unlimited requests</strong> during beta (reasonable use)</li>
+                            <li>✓ <strong>Direct Slack channel</strong> with founder</li>
+                            <li>✓ <strong>Shape the roadmap</strong> (your feedback builds features)</li>
+                            <li>✓ <strong>Grandfathered pricing</strong> when we launch publicly</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-blue-900 text-white rounded-xl p-6 mb-6">
+                        <h4 class="font-bold text-lg mb-3">What We Need From You:</h4>
+                        <ul class="space-y-2 text-sm text-blue-100">
+                            <li>• <strong>Real production use</strong> (not tire-kickers)</li>
+                            <li>• <strong>Weekly feedback</strong> (what works, what doesn't)</li>
+                            <li>• <strong>Tolerance for bugs</strong> (it's beta, things break)</li>
+                            <li>• <strong>Case study permission</strong> (if it works well)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="mailto:support@ezthrottle.network?subject=Beta%20Design%20Partner%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20be%20a%20design%20partner%20for%20EZThrottle.%0A%0A---%20Please%20fill%20out%20---%0A%0AWho%20I%20am%3A%20%0A%0AWhat%20I'm%20building%3A%20%0A%0AWhich%20APIs%20I'm%20calling%3A%20%0A%0ACurrent%20pain%20with%20rate%20limits%2F500s%3A%20%0A%0AExpected%20request%20volume%3A%20%0A%0AWhy%20Layer%208%20networking%20excites%20me%3A%20%0A%0AI%20understand%20this%20is%20beta%20software%3A%20Yes%0A%0AThanks!" 
+                           class="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-colors">
+                            Apply for Beta Access →
+                        </a>
+                        <p class="text-sm text-gray-600 mt-4">
+                            Limited spots. Prioritizing AI agents, data pipelines, and e-commerce.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Future Pricing -->
+                <div class="bg-gray-50 rounded-2xl p-8 border-2 border-gray-200">
+                    <h3 class="text-2xl font-bold mb-4 text-center">After Public Launch</h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Free tier (1M requests) unlocks after first $75K+ enterprise deal. Early partners get grandfathered in.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 text-sm">
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="font-bold mb-2">Free Tier (Future)</p>
+                            <p class="text-2xl font-bold mb-2">$0</p>
+                            <p class="text-gray-600 text-xs">1M requests/month</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="font-bold mb-2">Pro (Estimated)</p>
+                            <p class="text-2xl font-bold mb-2">$499</p>
+                            <p class="text-gray-600 text-xs">~2M requests/month</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="font-bold mb-2">Enterprise</p>
+                            <p class="text-2xl font-bold mb-2">Custom</p>
+                            <p class="text-gray-600 text-xs">Unlimited + SLAs</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-gray-500 text-center mt-6">
+                        Beta partners: Your pricing will be grandfathered when we raise rates.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- CTA -->
-    <div class="bg-black text-white py-16">
+    <div class="bg-black text-white py-20">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-4">Join Early Adopters Building the Future</h2>
-            <p class="text-xl mb-4">Start with reliable requests. Grow into workflows. Shape the roadmap.</p>
-            <p class="text-lg text-gray-400 mb-8">
-                Roman aqueducts: 2,000 years. BEAM: 40 years. EZThrottle: Built to last.
+            <h2 class="text-4xl font-bold mb-4">Layer 8 Networking Is Here</h2>
+            <p class="text-xl mb-6">
+                TCP for reliability. UDP for speed. Built on 40-year-old BEAM with a new Gleam.
             </p>
-            <a href="/signup" 
-               class="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
-                Start Free - 10k Requests →
+            <p class="text-lg text-gray-400 mb-8">
+                Not an API gateway. An API Aqueduct™
+            </p>
+            <a href="mailto:support@ezthrottle.network?subject=Beta%20Access%20Request" 
+               class="inline-block bg-white text-black px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
+                Request Beta Access →
             </a>
-            <p class="text-sm text-gray-500 mt-4">
-                No credit card required. Integrate in 30 minutes.
+            <p class="text-sm text-gray-400 mt-4">
+                Closed beta. Limited spots. Building with design partners.
             </p>
         </div>
     </div>
@@ -923,9 +1022,9 @@ result = workflow.execute(order_data)
     <!-- Footer -->
     <div class="border-t py-8 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
-            <p class="font-semibold text-gray-900">© 2025 EZThrottle. The World's First API Aqueduct™</p>
-            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
-            <div class="mt-4 space-x-4">
+            <p class="font-semibold text-gray-900">© 2025 EZThrottle</p>
+            <p class="text-sm mt-2">TCP for APIs. Built on BEAM with a new Gleam. Layer 8 networking for the modern web.</p>
+            <div class="mt-4 space-x-4 text-sm">
                 <a href="/" class="hover:text-black">Home</a>
                 <a href="/faq" class="hover:text-black">FAQ</a>
                 <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
