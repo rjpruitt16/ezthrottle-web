@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - EZThrottle</title>
+    <meta name="description" content="Engineering insights on API reliability, distributed systems, and making failure boring.">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <div class="bg-white border-b">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-900">EZThrottle</a>
+                <div class="space-x-6 text-sm">
+                    <a href="/blog" class="text-black font-semibold">Blog</a>
+                    <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
+                    <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
+                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
+                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="bg-white py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
+            <p class="text-xl text-gray-600">Engineering insights on API reliability, distributed systems, and making failure boring.</p>
+        </div>
+    </div>
+
+    <!-- Articles -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="space-y-12">
+            <!-- Article 1 -->
+            <article class="border-b pb-12">
+                <a href="/blog/making-failure-boring-again" class="group">
+                    <time datetime="2025-01-28" class="text-sm text-gray-500">January 28, 2025</time>
+                    <h2 class="text-2xl font-bold text-gray-900 mt-2 group-hover:text-blue-600">
+                        EZThrottle: Making Failure Boring Again
+                    </h2>
+                    <p class="text-gray-600 mt-3">
+                        Modern software fails with 429s, timeouts, and regions going dark. I built EZThrottle because I got tired of pretending this was normal. By turning retries, rate limits, and region health into shared state, it gives you something rare in distributed systems: predictable behavior when things go wrong.
+                    </p>
+                    <p class="text-blue-600 mt-4 font-medium group-hover:underline">Read more &rarr;</p>
+                </a>
+            </article>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="bg-black text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Join Early Adopters</h2>
+            <p class="text-xl mb-8">Start with 1 million free requests. No credit card required.</p>
+            <a href="/signup"
+               class="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                Start Free &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
+            <p class="font-semibold text-gray-900">&copy; 2025 EZThrottle. TCP for APIs. The World's First API Aqueduct&trade;</p>
+            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="hover:text-black">Home</a>
+                <a href="/blog" class="hover:text-black">Blog</a>
+                <a href="/faq" class="hover:text-black">FAQ</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" target="_blank" class="hover:text-black">SDKs</a>
+                <a href="https://twitter.com/RahmiPruitt" target="_blank" class="hover:text-black">Twitter</a>
+                <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-black">LinkedIn</a>
+                <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-black">YouTube</a>
+                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Contact</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

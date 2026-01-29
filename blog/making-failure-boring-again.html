@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZThrottle: Making Failure Boring Again - EZThrottle Blog</title>
+    <meta name="description" content="Modern software fails with 429s, timeouts, and regions going dark. EZThrottle turns retries, rate limits, and region health into shared state.">
+    <meta name="author" content="Rahmi Pruitt">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="EZThrottle: Making Failure Boring Again">
+    <meta property="og:description" content="Modern software fails with 429s, timeouts, and regions going dark. EZThrottle turns retries into shared state.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ezthrottle.network/blog/making-failure-boring-again">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@RahmiPruitt">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <div class="bg-white border-b">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-900">EZThrottle</a>
+                <div class="space-x-6 text-sm">
+                    <a href="/blog" class="text-gray-600 hover:text-black">Blog</a>
+                    <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
+                    <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
+                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
+                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article -->
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- Header -->
+        <header class="mb-12">
+            <p class="text-sm text-gray-500 mb-2">
+                <a href="/blog" class="hover:text-black">&larr; Back to Blog</a>
+            </p>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                EZThrottle: Making Failure Boring Again
+            </h1>
+            <div class="flex items-center text-sm text-gray-500">
+                <span>By <a href="https://twitter.com/RahmiPruitt" target="_blank" class="text-blue-600 hover:underline">@RahmiPruitt</a></span>
+                <span class="mx-2">&middot;</span>
+                <time datetime="2025-01-28">January 28, 2025</time>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="prose prose-lg max-w-none">
+            <p class="text-xl text-gray-700 mb-8">
+                Modern software doesn't fail in exciting ways.<br>
+                It fails with 429s, timeouts, and regions quietly going dark.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                And somehow we've all accepted that this means:
+            </p>
+            <ul class="list-disc pl-6 mb-8 text-gray-700 space-y-2">
+                <li>retry loops everywhere</li>
+                <li>exponential backoff copy-pasted into every codebase</li>
+                <li>someone eventually waking up at 2 a.m.</li>
+            </ul>
+
+            <p class="text-gray-700 mb-8">
+                I built EZThrottle because I got tired of pretending this was normal.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Problem Nobody Really Talks About</h2>
+
+            <p class="text-gray-700 mb-4">
+                Most systems deal with failure in isolation.
+            </p>
+            <p class="text-gray-700 mb-4">Each service:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>sends a request</li>
+                <li>gets a 429 or timeout</li>
+                <li>retries on its own schedule</li>
+                <li>hopes for the best</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                This works... until it doesn't.
+            </p>
+            <p class="text-gray-700 mb-4">
+                At scale, independent retries turn into retry storms:
+            </p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>rate limits get hammered</li>
+                <li>upstreams get slower</li>
+                <li>outages cascade</li>
+                <li>tail latency explodes</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                The real issue isn't that APIs fail. It's that every client is blind to what every other client is experiencing.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                Failure isn't shared state.
+            </p>
+
+            <!-- Image 1: The problem -->
+            <figure class="my-8">
+                <img src="/blog/images/failure-without-coordination.png" alt="Multiple services independently hitting a single upstream API" class="w-full rounded-lg shadow-lg">
+                <figcaption class="text-sm text-gray-500 mt-2 text-center">Without coordination, every service independently hammers the same upstream</figcaption>
+            </figure>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Simple Idea That Changed Everything</h2>
+
+            <p class="text-gray-700 mb-4">
+                EZThrottle is built around one opinionated idea:
+            </p>
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                Retries shouldn't be independent.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Instead of thousands of machines panicking at once, EZThrottle coordinates failure in one place.
+            </p>
+            <p class="text-gray-700 mb-4">
+                All outbound requests flow through EZThrottle, which keeps track of:
+            </p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>how fast a destination can actually handle traffic</li>
+                <li>which regions are healthy</li>
+                <li>when it's time to slow down or reroute</li>
+            </ul>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                Once failure becomes shared state, it stops being chaos.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Why This Runs on the BEAM (and Why That Matters)</h2>
+
+            <p class="text-gray-700 mb-4">
+                EZThrottle is written in Gleam and runs on Erlang/OTP.
+            </p>
+            <p class="text-gray-700 mb-4">
+                That choice wasn't about trends&mdash;it was about survival.
+            </p>
+            <p class="text-gray-700 mb-4">The BEAM was designed for:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>massive concurrency</li>
+                <li>message passing instead of shared memory</li>
+                <li>processes that fail without taking everything else down</li>
+                <li>distributed coordination that doesn't fall apart under load</li>
+            </ul>
+
+            <p class="text-gray-700 mb-8">
+                EZThrottle isn't trying to make one HTTP call fast. It's trying to coordinate millions of them safely. This is exactly what the BEAM is good at.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">429s Aren't Errors &mdash; They're Signals</h2>
+
+            <p class="text-gray-700 mb-4">
+                A 429 isn't your API yelling at you. It's your API asking you to slow down.
+            </p>
+            <p class="text-gray-700 mb-6">
+                Most systems ignore that signal and keep retrying anyway.
+            </p>
+            <p class="text-gray-700 mb-6">
+                EZThrottle takes the hint.
+            </p>
+
+            <h3 class="text-xl font-bold text-gray-900 mt-8 mb-4">The boring default (on purpose)</h3>
+
+            <p class="text-gray-700 mb-4">
+                By default, EZThrottle sends 2 requests per second per target domain.
+            </p>
+            <p class="text-gray-700 mb-4">
+                Not globally. Not per account. <strong>Per destination.</strong>
+            </p>
+            <p class="text-gray-700 mb-4">Examples:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li><code class="bg-gray-100 px-2 py-1 rounded">api.stripe.com</code> &rarr; 2 RPS</li>
+                <li><code class="bg-gray-100 px-2 py-1 rounded">api.openai.com</code> &rarr; 2 RPS</li>
+                <li><code class="bg-gray-100 px-2 py-1 rounded">api.anthropic.com</code> &rarr; 2 RPS</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                This default exists to prevent your infrastructure from accidentally turning into a distributed denial-of-service attack.
+            </p>
+            <p class="text-gray-700 mb-6">
+                It smooths bursts, stops retry storms, and keeps upstreams healthy.
+            </p>
+            <p class="text-gray-700 mb-8">
+                Yes, it's conservative. That's the point.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Tuning Rate Limits When You Need To</h2>
+
+            <p class="text-gray-700 mb-4">
+                You can tune rate limits when you know more than the default.
+            </p>
+            <p class="text-gray-700 mb-4">Here's what that looks like in code:</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+result = (
+    Step(client)
+    .url("https://api.example.com/endpoint")
+    .method("POST")
+    .type(StepType.PERFORMANCE)
+    .rps(10)              # preferred requests per second
+    .max_concurrent(25)   # optional concurrency cap
+    .webhooks([{"url": "https://your-app.com/webhook"}])
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-4">
+                Upstreams can also tell EZThrottle how fast they want to be called using response headers:
+            </p>
+            <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>X-EZTHROTTLE-RPS: 5
+X-EZTHROTTLE-MAX-CONCURRENT: 10</code></pre>
+
+            <p class="text-gray-700 mb-4">
+                The important part isn't the knobs. It's this:
+            </p>
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                Rate limiting becomes shared state instead of a thousand <code class="bg-gray-100 px-2 py-1 rounded">sleep()</code> calls.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">When Things Actually Break (5xx and Outages)</h2>
+
+            <p class="text-gray-700 mb-4">
+                Regions go down. Configs break. Dependencies flake out.
+            </p>
+            <p class="text-gray-700 mb-4">
+                EZThrottle assumes this will happen.
+            </p>
+            <p class="text-gray-700 mb-4">
+                When a request fails with a 5xx or times out:
+            </p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>that region is marked as unhealthy</li>
+                <li>traffic is rerouted to healthy regions</li>
+                <li>optionally, requests are raced across regions</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">The result isn't "everything is perfect."</p>
+            <p class="text-gray-700 mb-6">The result is: <strong>a small latency bump instead of a full outage.</strong></p>
+
+            <!-- Image 2: The solution -->
+            <figure class="my-8">
+                <img src="/blog/images/ezthrottle-architecture.png" alt="EZThrottle coordinating requests across multiple regions" class="w-full rounded-lg shadow-lg">
+                <figcaption class="text-sm text-gray-500 mt-2 text-center">EZThrottle coordinates traffic across regions with consensus and controlled rate limiting</figcaption>
+            </figure>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Region Racing: Let the Fastest One Win</h2>
+
+            <p class="text-gray-700 mb-4">
+                Sometimes you don't want to wait. You just want the request to finish.
+            </p>
+            <p class="text-gray-700 mb-4">EZThrottle supports region racing:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>send the same request to multiple regions</li>
+                <li>accept the first success</li>
+                <li>cancel the rest</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">Here's what that looks like:</p>
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+result = (
+    Step(client)
+    .url("https://api.example.com/endpoint")
+    .method("POST")
+    .type(StepType.PERFORMANCE)
+    .regions(["iad", "lax", "ord"])
+    .execution_mode("race")
+    .webhooks([{"url": "https://your-app.com/webhook"}])
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-8">
+                This isn't about chasing microbenchmarks. It's about <strong>predictable completion when the world is messy.</strong>
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">FRUGAL vs PERFORMANCE (How Teams Actually Use This)</h2>
+
+            <p class="text-gray-700 mb-4">
+                Not every request needs maximum reliability.
+            </p>
+            <p class="text-gray-700 mb-4">EZThrottle supports two common patterns:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li><strong>FRUGAL:</strong> Try locally first. Forward only when things go wrong.</li>
+                <li><strong>PERFORMANCE:</strong> Always run through EZThrottle for distributed reliability.</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">Here's a FRUGAL example:</p>
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+result = (
+    Step(client)
+    .url("https://api.example.com/endpoint")
+    .type(StepType.FRUGAL)
+    .fallback_on_error([429, 500, 502, 503])
+    .webhooks([{"url": "https://your-app.com/webhook"}])
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-8">
+                This lets teams start cheap and gradually move reliability into infrastructure instead of application code.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Tradeoff EZThrottle Makes (On Purpose)</h2>
+
+            <p class="text-gray-700 mb-4">EZThrottle prioritizes:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>predictable completion</li>
+                <li>bounded failure</li>
+                <li>coordinated recovery</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">Over:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>maximum burst throughput</li>
+                <li>raw, unbounded speed</li>
+            </ul>
+
+            <p class="text-gray-700 mb-8">
+                If you want every request to fire as fast as possible, EZThrottle isn't for you.<br>
+                If you want to stop waking up to retry storms, it probably is.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">What EZThrottle Is (and Isn't)</h2>
+
+            <p class="text-gray-700 mb-4"><strong>EZThrottle is:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>a reliable HTTP transport</li>
+                <li>a coordination layer for outbound requests</li>
+                <li>a way to make failure boring again</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4"><strong>EZThrottle is not:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>a database</li>
+                <li>a general compute platform</li>
+                <li>a replacement for business logic</li>
+            </ul>
+
+            <p class="text-gray-700 mb-8">
+                Requests live in memory, move through the system, and disappear. There's nothing to mine, leak, or hoard.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Why This Matters</h2>
+
+            <p class="text-gray-700 mb-4">
+                Most infrastructure complexity exists to compensate for unreliable networks.
+            </p>
+            <p class="text-gray-700 mb-4">
+                EZThrottle doesn't eliminate failure.
+            </p>
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                It eliminates panic.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                By turning retries, rate limits, and region health into shared state, it gives you something rare in distributed systems:
+            </p>
+            <p class="text-2xl font-bold text-gray-900 mb-12">
+                Predictable behavior when things go wrong.
+            </p>
+        </div>
+
+        <!-- Author -->
+        <div class="border-t pt-8 mt-12">
+            <div class="flex items-center">
+                <div>
+                    <p class="font-semibold text-gray-900">Rahmi Pruitt</p>
+                    <p class="text-sm text-gray-600">Founder, EZThrottle</p>
+                    <a href="https://twitter.com/RahmiPruitt" target="_blank" class="text-sm text-blue-600 hover:underline">@RahmiPruitt</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- CTA -->
+    <div class="bg-black text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Make Failure Boring?</h2>
+            <p class="text-xl mb-8">Start with 1 million free requests. No credit card required.</p>
+            <a href="/signup"
+               class="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                Start Free &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
+            <p class="font-semibold text-gray-900">&copy; 2025 EZThrottle. TCP for APIs. The World's First API Aqueduct&trade;</p>
+            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="hover:text-black">Home</a>
+                <a href="/blog" class="hover:text-black">Blog</a>
+                <a href="/faq" class="hover:text-black">FAQ</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" target="_blank" class="hover:text-black">SDKs</a>
+                <a href="https://twitter.com/RahmiPruitt" target="_blank" class="hover:text-black">Twitter</a>
+                <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-black">LinkedIn</a>
+                <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-black">YouTube</a>
+                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Contact</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
