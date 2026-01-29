@@ -193,34 +193,20 @@
                 Yes, it's conservative. That's the point.
             </p>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Tuning Rate Limits When You Need To</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">How Rate Limits Work</h2>
 
             <p class="text-gray-700 mb-4">
-                You can tune rate limits when you know more than the default.
+                EZThrottle enforces rate limits automatically. Clients don't control the rate &mdash; the service maintainer does.
             </p>
-            <p class="text-gray-700 mb-4">Here's what that looks like in code:</p>
-
-            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
-
-client = EZThrottle(api_key="your_api_key")
-
-result = (
-    Step(client)
-    .url("https://api.example.com/endpoint")
-    .method("POST")
-    .type(StepType.PERFORMANCE)
-    .rps(10)              # preferred requests per second
-    .max_concurrent(25)   # optional concurrency cap
-    .webhooks([{"url": "https://your-app.com/webhook"}])
-    .execute()
-)</code></pre>
-
             <p class="text-gray-700 mb-4">
-                Upstreams can also tell EZThrottle how fast they want to be called using response headers:
+                If you're building an API and want to tell EZThrottle how fast you can handle traffic, respond with these headers:
             </p>
             <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>X-EZTHROTTLE-RPS: 5
 X-EZTHROTTLE-MAX-CONCURRENT: 10</code></pre>
 
+            <p class="text-gray-700 mb-4">
+                EZThrottle reads these and adjusts. No client configuration needed &mdash; rate limiting happens at the infrastructure layer.
+            </p>
             <p class="text-gray-700 mb-4">
                 The important part isn't the knobs. It's this:
             </p>
