@@ -233,6 +233,130 @@ Result: 1 attempt for 1 successful request</code></pre>
             </div>
         </div>
 
+        <!-- Architecture & Reliability Concerns -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-orange-500">Architecture & Reliability</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Why not just use a load balancer?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>Because load balancers solve a different problem.</strong></p>
+
+                    <p class="mb-4">Load balancers distribute traffic across your servers. That's it. They were never built for:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Managing retries when APIs fail</li>
+                        <li>• Coordinating rate limits across distributed systems</li>
+                        <li>• Queueing requests during outages</li>
+                        <li>• Cross-region failover for API calls</li>
+                    </ul>
+
+                    <p class="mb-4"><strong>EZThrottle is bidirectional protection:</strong></p>
+
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-3">Protection flows both ways:</p>
+                        <ul class="space-y-3 ml-6 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-green-600 mr-2 mt-1">→</span>
+                                <span><strong>Your customers are protected from YOUR outages:</strong> If your US-East region goes down, requests automatically route through another region. Your customers don't notice.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-600 mr-2 mt-1">←</span>
+                                <span><strong>YOU are protected from API provider outages:</strong> If Amazon has an outage in one region, your requests get distributed across regions that are still healthy.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <p class="mb-4">A load balancer can't do this. It just round-robins traffic to your servers. It doesn't understand rate limits, doesn't queue intelligently, and doesn't coordinate across providers.</p>
+
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>Think of it this way:</strong> A load balancer is a traffic cop. EZThrottle is a water utility — we manage flow, pressure, and routing so you always have water even when one pipe bursts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">If EZThrottle fails, doesn't my system fail?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>BEAM doesn't fail the way other systems do.</strong></p>
+
+                    <p class="mb-4">EZThrottle is built on BEAM (Erlang/Elixir) — the same technology that powers:</p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• <strong>Telephone switches</strong> handling millions of calls without downtime</li>
+                        <li>• <strong>WhatsApp</strong> serving 2 billion users with 50 engineers</li>
+                        <li>• <strong>Discord</strong> handling millions of concurrent connections</li>
+                        <li>• <strong>Ericsson switches</strong> with 99.9999999% uptime (nine 9s)</li>
+                    </ul>
+
+                    <div class="bg-purple-50 p-6 rounded-lg mb-4">
+                        <p class="font-semibold mb-3">Why BEAM is different:</p>
+                        <ul class="space-y-3 ml-6 text-gray-700">
+                            <li><strong>1. "Let it crash" philosophy:</strong> Instead of trying to prevent all errors, BEAM isolates failures. One crashed process doesn't bring down the system — it just restarts instantly.</li>
+                            <li><strong>2. Supervision trees:</strong> Every process is monitored. If something dies, its supervisor restarts it in milliseconds. Automatically. No human intervention.</li>
+                            <li><strong>3. Hot code reloading:</strong> We can deploy updates without stopping the system. Your requests keep processing during deploys.</li>
+                            <li><strong>4. Built for telecom:</strong> BEAM was designed for telephone networks where "down" means emergency calls don't connect. It's mission-critical by design.</li>
+                        </ul>
+                    </div>
+
+                    <p class="mb-4"><strong>What happens if a machine dies?</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• Requests are replicated across machines</li>
+                        <li>• Fly.io automatically routes to healthy machines</li>
+                        <li>• Supervision trees restart any crashed processes</li>
+                        <li>• Your SDK can retry to EZThrottle (we're distributed)</li>
+                    </ul>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>The honest answer:</strong> No system is 100% reliable. But BEAM is what telecoms use when "down" means people can't call 911. It's battle-tested for 40+ years. I chose it specifically because I want you to sleep at night.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">2 requests per second seems slow. How does that scale?</h3>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <p class="mb-4"><strong>2 req/sec per node. Thousands of nodes. You do the math.</strong></p>
+
+                    <p class="mb-4">The beauty of EZThrottle's architecture:</p>
+
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <p class="font-semibold mb-2">Distributed coordination, not centralized bottleneck:</p>
+                        <p class="text-sm text-gray-700 mb-2">2 req/sec × 1,000 machines = <strong>2,000 coordinated req/sec</strong></p>
+                        <p class="text-sm text-gray-700">Each machine sends slowly. Together, the network is fast. APIs see organic distributed traffic, not abuse from a single IP.</p>
+                    </div>
+
+                    <p class="mb-4"><strong>But here's the real insight:</strong></p>
+
+                    <p class="mb-4">For YOUR servers and clients, you can tune traffic with a <strong>header change</strong> instead of deploying new infrastructure:</p>
+
+                    <div class="bg-gray-900 text-gray-100 p-4 rounded mb-4 overflow-x-auto">
+                        <p class="text-sm font-mono mb-2"># Traditional approach: Deploy more servers, update load balancer configs</p>
+                        <p class="text-sm font-mono mb-4 text-gray-500"># Takes: Hours to days. Costs: $$$</p>
+                        <p class="text-sm font-mono mb-2"># EZThrottle approach: Change a header</p>
+                        <p class="text-sm font-mono text-green-400">X-EZThrottle-Priority: high</p>
+                        <p class="text-sm font-mono text-gray-500"># Takes: One code change. Costs: $0</p>
+                    </div>
+
+                    <p class="mb-4"><strong>What you can control with headers:</strong></p>
+                    <ul class="space-y-2 mb-4 ml-6 text-gray-700">
+                        <li>• <strong>Priority levels:</strong> Skip the queue for urgent requests</li>
+                        <li>• <strong>Routing preferences:</strong> Prefer certain regions</li>
+                        <li>• <strong>Timeout behavior:</strong> Fail fast vs wait patiently</li>
+                    </ul>
+
+                    <p class="mb-4"><strong>The paradigm shift:</strong></p>
+
+                    <div class="bg-green-50 p-4 rounded-lg mb-4">
+                        <p class="text-sm text-gray-700 mb-2"><strong>Old way:</strong> Traffic spikes → frantically spin up servers → update configs → wait for DNS → hope it works</p>
+                        <p class="text-sm text-gray-700"><strong>EZThrottle way:</strong> Traffic spikes → we absorb it → you adjust behavior with code changes → no infrastructure panic</p>
+                    </div>
+
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm"><strong>2 req/sec is intentionally conservative.</strong> It's safe for every API. If you have documentation showing an API handles more, email us — we'll add it to the global config and everyone benefits.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Pricing & Trials -->
         <div class="mb-16">
             <h2 class="text-3xl font-bold mb-8 pb-4 border-b-2 border-green-500">Pricing & Trials</h2>
