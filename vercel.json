@@ -25,6 +25,14 @@
       "destination": "https://tracktags.fly.dev/biz_2FFEAB27-752C-4125-99E9-99202D3CEDD3/login"
     },
     {
+      "source": "/auth/callback",
+      "destination": "https://tracktags.fly.dev/auth/callback"
+    },
+    {
+      "source": "/auth/signout",
+      "destination": "https://tracktags.fly.dev/auth/signout"
+    },
+    {
       "source": "/workspace",
       "destination": "https://tracktags.fly.dev/biz_2FFEAB27-752C-4125-99E9-99202D3CEDD3/workspace"
     },
