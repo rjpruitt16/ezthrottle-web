@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serverless 2.0: RIP Operations - EZThrottle Blog</title>
+    <meta name="description" content="What happens when you stop managing retries and start shipping features. Scale requests, not pods. Replace Lambda, SQS, and DynamoDB with one API call.">
+    <meta name="author" content="Rahmi Pruitt">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Serverless 2.0: RIP Operations">
+    <meta property="og:description" content="What happens when you stop managing retries and start shipping features. Scale requests, not pods.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ezthrottle.network/blog/serverless-2-rip-operations">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@RahmiPruitt">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <div class="bg-white border-b">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-900">EZThrottle</a>
+                <div class="space-x-6 text-sm">
+                    <a href="/blog" class="text-gray-600 hover:text-black">Blog</a>
+                    <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
+                    <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
+                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
+                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article -->
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- Header -->
+        <header class="mb-12">
+            <p class="text-sm text-gray-500 mb-2">
+                <a href="/blog" class="hover:text-black">&larr; Back to Blog</a>
+            </p>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                Serverless 2.0: RIP Operations
+            </h1>
+            <p class="text-xl text-gray-600 mb-4">
+                What happens when you stop managing retries and start shipping features
+            </p>
+            <div class="flex items-center text-sm text-gray-500">
+                <span>By <a href="https://twitter.com/RahmiPruitt" target="_blank" class="text-blue-600 hover:underline">@RahmiPruitt</a></span>
+                <span class="mx-2">&middot;</span>
+                <time datetime="2026-01-30">January 30, 2026</time>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="prose prose-lg max-w-none">
+
+            <!-- Intro linking to previous article -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8">
+                <p class="text-gray-700">
+                    <strong>This is Part 2.</strong> If you haven't read <a href="/blog/making-failure-boring-again" class="text-blue-600 underline">Making Failure Boring Again</a>,
+                    start there. It explains why retries shouldn't be independent and how EZThrottle coordinates failure across regions.
+                </p>
+                <p class="text-gray-700 mt-2">
+                    This article is about what you can <strong>build</strong> when Layer 7 is reliable.
+                </p>
+            </div>
+
+            <p class="text-xl text-gray-700 mb-8">
+                Spoiler: A lot. In a weekend. Without IAM policies.
+            </p>
+
+            <!-- Section 1: CPU Thrashing -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Your Servers Are Faster Than You Think</h2>
+
+            <p class="text-gray-700 mb-4">
+                Every retry loop is CPU thrashing.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code># What your server is actually doing
+while True:
+    try:
+        response = requests.post(api_url)
+        if response.status_code == 429:
+            time.sleep(backoff)  # Thread blocked. Doing nothing.
+            backoff *= 2         # Still nothing.
+            continue             # Try again. Maybe nothing.
+        break
+    except Timeout:
+        time.sleep(backoff)      # More nothing.
+        continue</code></pre>
+
+            <p class="text-gray-700 mb-4">
+                That <code class="bg-gray-100 px-2 py-1 rounded">sleep()</code> isn't free. That thread is allocated. That connection is open. Your server is <em>waiting</em> instead of <em>working</em>.
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>The math nobody does:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>1000 requests/sec hitting rate limits</li>
+                <li>Average 3 retries per request</li>
+                <li>Average 2 second backoff per retry</li>
+                <li>= 6000 thread-seconds of waiting per second</li>
+                <li>= Your server is 85% waiting, 15% working</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                Remove the retry burden, and suddenly your Python server handles what you thought required Go.
+                Your Go server handles what you thought required C.
+                Your C server handles what you thought required more servers.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                EZThrottle moves retries off your CPU entirely. Your server fires the request and moves on. We handle the waiting. You handle more requests.
+            </p>
+
+            <!-- Section 2: Region Racing -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Region Racing</h2>
+
+            <p class="text-gray-700 mb-4">
+                Send the same request to multiple regions. First response wins. Cancel the rest.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+result = (
+    Step(client)
+    .url("https://api.openai.com/v1/chat/completions")
+    .method("POST")
+    .headers({"Authorization": "Bearer sk-..."})
+    .body('{"model": "gpt-4", "messages": [{"role": "user", "content": "Hello"}]}')
+    .type(StepType.PERFORMANCE)
+    .regions(["iad", "lax", "ord"])  # DC, LA, Chicago
+    .execution_mode("race")          # First wins
+    .webhooks([{"url": "https://app.com/webhook"}])
+    .execute()
+)
+
+print(f"Job submitted: {result['job_id']}")
+# Webhook arrives from whichever region responds first</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>Why this matters:</strong></p>
+
+            <p class="text-gray-700 mb-4">
+                Lambda cold starts: 500ms-2s. Plus your retry logic. Plus your backoff. Plus praying the region is healthy.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                EZThrottle region racing: Request already in flight to 3 regions before Lambda finishes booting.
+                Fastest region wins. Others cancelled. No retries needed because one of them worked.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                The fastest region is always faster than the average region. And dramatically faster than a cold region retrying.
+            </p>
+
+            <!-- Section 3: The 2 RPS Concern -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">"But 2 RPS Is Too Slow"</h2>
+
+            <p class="text-gray-700 mb-4">
+                I hear this a lot. Let me address it directly.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Yes, 2 requests per second per domain is conservative. That's intentional &mdash; it's safe for every API without needing custom configuration.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                But here's what people miss:
+            </p>
+
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 my-6">
+                <p class="font-semibold text-gray-900 mb-2">You're not limited to one provider.</p>
+                <p class="text-gray-700">
+                    What are the chances that OpenAI, Anthropic, Google, <em>and</em> xAI are <strong>all</strong> having outages
+                    with full queues at the same time across <strong>all</strong> regions?
+                </p>
+                <p class="text-gray-700 mt-2">
+                    Basically zero. One of them, in some region, will have capacity. That's the whole point.
+                </p>
+            </div>
+
+            <p class="text-gray-700 mb-4">
+                When you can race requests across providers and regions, "slow" becomes "the fastest available option at this moment."
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                And that's still dramatically faster than Lambda cold starts + retry storms + debugging at 3am.
+            </p>
+
+            <!-- Section 4: Fallback Racing -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Fallback Racing</h2>
+
+            <p class="text-gray-700 mb-4">
+                What if OpenAI is rate limited? Try Anthropic. If Anthropic times out, try Google. If Google fails, try xAI.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+# Define fallback chain: OpenAI → Anthropic → Google → xAI
+xai_fallback = (
+    Step()
+    .url("https://api.x.ai/v1/chat/completions")
+    .method("POST")
+    .headers({"Authorization": "Bearer xai-..."})
+    .body('{"model": "grok-1", "messages": [...]}')
+)
+
+google_fallback = (
+    Step()
+    .url("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent")
+    .method("POST")
+    .headers({"Authorization": "Bearer ..."})
+    .body('{"contents": [...]}')
+    .fallback(xai_fallback, trigger_on_error=[429, 500, 502, 503, 504])
+)
+
+anthropic_fallback = (
+    Step()
+    .url("https://api.anthropic.com/v1/messages")
+    .method("POST")
+    .headers({"x-api-key": "sk-ant-...", "anthropic-version": "2023-06-01"})
+    .body('{"model": "claude-3-opus-20240229", "messages": [...]}')
+    .fallback(google_fallback, trigger_on_error=[429, 500, 502, 503, 504])
+)
+
+# Primary request with full fallback chain
+result = (
+    Step(client)
+    .url("https://api.openai.com/v1/chat/completions")
+    .method("POST")
+    .headers({"Authorization": "Bearer sk-..."})
+    .body('{"model": "gpt-4", "messages": [...]}')
+    .type(StepType.PERFORMANCE)
+    .fallback(anthropic_fallback, trigger_on_error=[429, 500, 502, 503, 504])
+    .webhooks([{"url": "https://app.com/inference-complete"}])
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-4">
+                <strong>Steady stream of inference.</strong> No babysitting. No 3am pages. OpenAI having a bad day? You don't even notice &mdash; Anthropic picked it up.
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>Still faster than Lambda:</strong></p>
+
+            <p class="text-gray-700 mb-4">
+                Even with fallback overhead, you're not:
+            </p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Waiting for cold starts</li>
+                <li>Managing retry storms in your code</li>
+                <li>Debugging why SQS isn't triggering</li>
+                <li>Figuring out which IAM policy is missing</li>
+            </ul>
+
+            <p class="text-gray-700 mb-8">
+                The fallback happens at the infrastructure layer. Your code just gets a webhook with the result.
+            </p>
+
+            <!-- Section 5: Webhook Fanout -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Webhook Fanout</h2>
+
+            <p class="text-gray-700 mb-4">
+                Send results to multiple services. Get quorum.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+result = (
+    Step(client)
+    .url("https://api.stripe.com/v1/charges")
+    .method("POST")
+    .headers({"Authorization": "Bearer sk_live_..."})
+    .body('{"amount": 2000, "currency": "usd", "source": "tok_visa"}')
+    .type(StepType.PERFORMANCE)
+    .webhooks([
+        # Primary app (must succeed)
+        {"url": "https://app.com/payment-complete", "has_quorum_vote": True},
+
+        # Analytics (nice to have)
+        {"url": "https://analytics.com/track", "has_quorum_vote": False},
+
+        # CRM update (must succeed)
+        {"url": "https://crm.com/customer-charged", "has_quorum_vote": True},
+
+        # Backup/audit log (must succeed)
+        {"url": "https://audit.com/log", "has_quorum_vote": True},
+
+        # Notification service (nice to have)
+        {"url": "https://notify.com/send-receipt", "has_quorum_vote": False}
+    ])
+    .webhook_quorum(2)  # At least 2 quorum voters must succeed
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>This replaces:</strong></p>
+
+            <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>SQS Queue
+  → Lambda (parse message)
+    → SNS Topic
+      → Lambda (send to app.com)
+      → Lambda (send to analytics.com)
+      → Lambda (send to crm.com)
+      → Lambda (send to audit.com)
+      → Lambda (send to notify.com)
+    → DynamoDB (track which succeeded)
+    → Step Function (check quorum)
+    → Dead Letter Queue (handle failures)
+    → CloudWatch (debug why it's broken)
+    → IAM Policies (12 of them, one is wrong, good luck)</code></pre>
+
+            <p class="text-gray-700 mb-4">
+                With one API call.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                Quorum is literally the foundation of DynamoDB. You're getting Dynamo-style consistency for webhook delivery without running Dynamo.
+            </p>
+
+            <!-- Section 6: Workflows -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Workflows (What You Can Build in a Weekend)</h2>
+
+            <p class="text-gray-700 mb-4">
+                Chain success and failure handlers. Build entire pipelines.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+# Step 4: Final analytics (runs after notification)
+analytics = (
+    Step()
+    .url("https://analytics.com/track")
+    .method("POST")
+    .body('{"event": "order_complete"}')
+    .type(StepType.FRUGAL)  # Cheap, local execution
+)
+
+# Step 3: Send notification (runs after payment)
+notification = (
+    Step()
+    .url("https://api.sendgrid.com/v3/mail/send")
+    .method("POST")
+    .headers({"Authorization": "Bearer SG..."})
+    .body('{"to": "customer@email.com", "subject": "Order confirmed!"}')
+    .type(StepType.PERFORMANCE)
+    .regions(["iad", "lax"])
+    .on_success(analytics)
+)
+
+# Step 2: Failure handler (Slack alert if payment fails)
+failure_alert = (
+    Step()
+    .url("https://hooks.slack.com/services/xxx/yyy/zzz")
+    .method("POST")
+    .body('{"text": "Payment failed! Check dashboard."}')
+    .type(StepType.FRUGAL)
+)
+
+# Step 1: Primary payment
+result = (
+    Step(client)
+    .url("https://api.stripe.com/v1/charges")
+    .method("POST")
+    .headers({"Authorization": "Bearer sk_live_..."})
+    .body('{"amount": 5000, "currency": "usd"}')
+    .type(StepType.PERFORMANCE)
+    .regions(["iad", "lax", "ord"])
+    .on_success(notification)
+    .on_failure(failure_alert)
+    .webhooks([{"url": "https://app.com/order-status"}])
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>What this would take in AWS:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Step Functions state machine (JSON, hundreds of lines)</li>
+                <li>4 Lambda functions (Node.js or Python, each needs deps)</li>
+                <li>IAM roles for each Lambda</li>
+                <li>SQS queues between steps</li>
+                <li>DynamoDB for state tracking</li>
+                <li>CloudWatch for logging</li>
+                <li>2-3 weeks of setup and debugging</li>
+                <li>Ongoing maintenance forever</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4"><strong>What it takes in EZThrottle:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>The code above</li>
+                <li>A weekend</li>
+                <li>Zero ongoing maintenance</li>
+            </ul>
+
+            <!-- Section 7: Legacy Code Wrappers -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Legacy Code Wrappers</h2>
+
+            <p class="text-gray-700 mb-4">
+                You have existing code. You don't want to rewrite it. You just want it to stop failing.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, auto_forward, ForwardToEZThrottle
+import requests
+
+client = EZThrottle(api_key="your_api_key")
+
+@auto_forward(client, fallback_on_error=[429, 500, 502, 503])
+def call_openai(prompt):
+    """
+    Your existing function. No changes to the logic.
+    Just add the decorator.
+    """
+    response = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers={"Authorization": "Bearer sk-..."},
+        json={"model": "gpt-4", "messages": [{"role": "user", "content": prompt}]}
+    )
+    response.raise_for_status()  # Raises on 429, 500, etc.
+    return response.json()
+
+# Call it exactly like before
+result = call_openai("Write a poem about distributed systems")
+
+# If it succeeds: you get the response
+# If it hits 429/500: automatically forwarded to EZThrottle
+# Webhook delivers result later</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>For more control, raise explicitly:</strong></p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>@auto_forward(client)
+def process_payment(order_id, amount):
+    try:
+        response = requests.post(
+            "https://api.stripe.com/v1/charges",
+            headers={"Authorization": "Bearer sk_live_..."},
+            json={"amount": amount, "currency": "usd"}
+        )
+
+        if response.status_code == 429:
+            # Explicitly forward to EZThrottle with full context
+            raise ForwardToEZThrottle(
+                url="https://api.stripe.com/v1/charges",
+                method="POST",
+                headers={"Authorization": "Bearer sk_live_..."},
+                body=f'{{"amount": {amount}, "currency": "usd"}}',
+                idempotent_key=f"order_{order_id}",  # Prevent duplicate charges!
+                webhooks=[{"url": "https://app.com/payment-complete"}],
+                metadata={"order_id": order_id}
+            )
+
+        return response.json()
+
+    except requests.Timeout:
+        raise ForwardToEZThrottle(
+            url="https://api.stripe.com/v1/charges",
+            method="POST",
+            idempotent_key=f"order_{order_id}",
+            webhooks=[{"url": "https://app.com/payment-complete"}]
+        )
+
+# Your existing code keeps working
+# Failed requests get handled automatically
+# No rewrite required</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>Onboarding is simple:</strong></p>
+            <ol class="list-decimal pl-6 mb-8 text-gray-700 space-y-2">
+                <li><code class="bg-gray-100 px-2 py-1 rounded">pip install ezthrottle</code></li>
+                <li>Add <code class="bg-gray-100 px-2 py-1 rounded">@auto_forward</code> decorator</li>
+                <li>Deploy</li>
+                <li>Sleep through outages</li>
+            </ol>
+
+            <!-- Section 8: Async/Await -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Async/Await for Webhooks</h2>
+
+            <p class="text-gray-700 mb-4">
+                Event-driven architecture. Non-blocking. Your server never waits.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>import asyncio
+from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+async def process_order(order):
+    """Submit order processing, don't wait for completion."""
+    result = (
+        Step(client)
+        .url("https://api.stripe.com/v1/charges")
+        .method("POST")
+        .body(f'{{"amount": {order["amount"]}, "currency": "usd"}}')
+        .type(StepType.PERFORMANCE)
+        .idempotent_key(f"order_{order['id']}")
+        .webhooks([{"url": "https://app.com/order-complete"}])
+        .execute()
+    )
+
+    # Returns immediately. Webhook arrives later.
+    return {"order_id": order["id"], "job_id": result["job_id"]}
+
+async def process_batch(orders):
+    """Process 1000 orders concurrently. All non-blocking."""
+    tasks = [process_order(order) for order in orders]
+    results = await asyncio.gather(*tasks)
+
+    print(f"Submitted {len(results)} orders")
+    # Webhooks arrive as each completes
+    # Your server is free to handle more requests
+
+# Submit 1000 orders in parallel
+orders = [{"id": i, "amount": 1000 + i} for i in range(1000)]
+asyncio.run(process_batch(orders))</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>FastAPI webhook handler:</strong></p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from fastapi import FastAPI, Request
+from ezthrottle import verify_webhook_signature_strict
+from datetime import datetime
+
+app = FastAPI()
+WEBHOOK_SECRET = "your_webhook_secret"
+
+@app.post("/order-complete")
+async def handle_order_webhook(request: Request):
+    # Verify signature (prevent spoofing)
+    signature = request.headers.get("X-EZThrottle-Signature", "")
+    payload = await request.body()
+
+    verify_webhook_signature_strict(payload, signature, WEBHOOK_SECRET)
+
+    # Process completed order
+    data = await request.json()
+    order_id = data["metadata"]["order_id"]
+    status = data["status"]
+
+    if status == "success":
+        response_body = data["response"]["body"]
+        # Order succeeded - update database, send confirmation
+        await update_order_status(order_id, "paid")
+        await send_confirmation_email(order_id)
+    else:
+        # Order failed - alert support
+        await update_order_status(order_id, "failed")
+        await alert_support(order_id)
+
+    return {"ok": True}</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>The pattern:</strong></p>
+            <ol class="list-decimal pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Submit request &rarr; returns immediately</li>
+                <li>Your server handles more requests</li>
+                <li>Webhook arrives when complete</li>
+                <li>Process result asynchronously</li>
+                <li>Never block. Never wait. Never sleep.</li>
+            </ol>
+
+            <p class="text-gray-700 mb-4"><strong>This is event-driven architecture without:</strong></p>
+            <ul class="list-disc pl-6 mb-8 text-gray-700 space-y-2">
+                <li>SQS</li>
+                <li>SNS</li>
+                <li>EventBridge</li>
+                <li>Lambda triggers</li>
+                <li>Dead letter queues</li>
+                <li>IAM policies</li>
+            </ul>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                Just HTTP in, webhook out.
+            </p>
+
+            <!-- Closing: RIP Operations -->
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">RIP Operations</h2>
+
+            <p class="text-gray-700 mb-4">What you don't manage anymore:</p>
+
+            <div class="overflow-x-auto mb-8">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-gray-700 font-semibold">Before</th>
+                            <th class="px-6 py-3 text-left text-gray-700 font-semibold">After</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr><td class="px-6 py-3">Lambda functions</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">SQS queues</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">DynamoDB tables</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">Step Functions</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">IAM policies</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">CloudWatch alarms</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">Dead letter queues</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">Retry logic</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">Exponential backoff</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                        <tr><td class="px-6 py-3">3am pages</td><td class="px-6 py-3 text-red-600">Gone</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="text-gray-700 mb-4">What you have:</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>pip install ezthrottle</code></pre>
+
+            <p class="text-gray-700 mb-6">And an API key.</p>
+
+            <div class="bg-gray-100 p-6 rounded-lg mb-8">
+                <p class="text-gray-700 mb-2">
+                    <strong>Serverless 1.0:</strong> You don't manage servers. You manage serverless infrastructure.
+                </p>
+                <p class="text-gray-700">
+                    <strong>Serverless 2.0:</strong> You don't manage infrastructure. You ship features.
+                </p>
+            </div>
+
+            <p class="text-2xl font-bold text-gray-900 mb-12">
+                Scale your requests. Not your pods.
+            </p>
+        </div>
+
+        <!-- SDKs -->
+        <div class="border-t pt-8 mt-12">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Get Started</h3>
+            <p class="text-gray-700 mb-4">SDKs available for:</p>
+            <div class="flex flex-wrap gap-4">
+                <a href="https://github.com/rjpruitt16/ezthrottle-python" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-800 font-medium">
+                    Python
+                </a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-node" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-800 font-medium">
+                    Node.js
+                </a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-go" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-800 font-medium">
+                    Go
+                </a>
+            </div>
+        </div>
+
+        <!-- Author -->
+        <div class="border-t pt-8 mt-12">
+            <div class="flex items-center">
+                <div>
+                    <p class="font-semibold text-gray-900">Rahmi Pruitt</p>
+                    <p class="text-sm text-gray-600">Founder, EZThrottle</p>
+                    <a href="https://twitter.com/RahmiPruitt" target="_blank" class="text-sm text-blue-600 hover:underline">@RahmiPruitt</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- CTA -->
+    <div class="bg-black text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to RIP Operations?</h2>
+            <p class="text-xl mb-8">Start with 1 million free requests. No credit card required.</p>
+            <a href="/signup"
+               class="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                Start Free &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
+            <p class="font-semibold text-gray-900">&copy; 2026 EZThrottle. The World's First API Aqueduct&trade;</p>
+            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="hover:text-black">Home</a>
+                <a href="/blog" class="hover:text-black">Blog</a>
+                <a href="/faq" class="hover:text-black">FAQ</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" target="_blank" class="hover:text-black">SDKs</a>
+                <a href="https://twitter.com/RahmiPruitt" target="_blank" class="hover:text-black">Twitter</a>
+                <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-black">LinkedIn</a>
+                <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-black">YouTube</a>
+                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Contact</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
