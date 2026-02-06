@@ -105,6 +105,126 @@
                 Failure isn't shared state.
             </p>
 
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">"Why Not Just Use Exponential Backoff?"</h2>
+
+            <p class="text-gray-700 mb-4">
+                This is the first question everyone asks. And it's a good one.
+            </p>
+            <p class="text-gray-700 mb-4">
+                Exponential backoff works beautifully when you have <strong>one client</strong> talking to <strong>one server</strong>.
+                Hit a rate limit, wait longer, try again. Problem solved.
+            </p>
+            <p class="text-gray-700 mb-4">
+                Now picture N clients hitting the same API.
+            </p>
+            <p class="text-gray-700 mb-4">
+                They all hit the rate limit at roughly the same time. They all start backing off independently.
+                They all retry after the backoff window... at roughly the same time. The thundering herd.
+            </p>
+            <p class="text-gray-700 mb-4">
+                Here's the math:
+            </p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li><strong>N clients</strong> each discover the rate limit independently</li>
+                <li>Each client retries 3 times = <strong>3N wasted requests</strong></li>
+                <li>The upstream sees 3N retry storms instead of controlled traffic</li>
+                <li>Your CPU spends cycles sleeping and retrying instead of handling real work</li>
+            </ul>
+            <p class="text-gray-700 mb-4">
+                EZThrottle sees the same rate limit <strong>once</strong>.
+                One client discovers it, the shared state updates, and everyone slows down together.
+            </p>
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                N clients × 3 retries = 3N wasted requests.<br>
+                EZThrottle: ~1.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The DIY Retry Queue: A Horror Story</h2>
+
+            <p class="text-gray-700 mb-4">
+                "What if we just build a retry queue ourselves?"
+            </p>
+            <p class="text-gray-700 mb-4">
+                Let me tell you how this goes. I've seen it. I've lived it.
+            </p>
+            <p class="text-gray-700 mb-6">
+                <strong>Month 1:</strong> You have N clients fighting for quota Q on a single API.
+                Retry storms are killing you. Someone suggests a centralized queue.
+            </p>
+            <p class="text-gray-700 mb-6">
+                <strong>Month 2:</strong> You build the queue. It works! Requests flow through one bottleneck,
+                rate limiting is enforced, retries are controlled. Ship it. Victory beer.
+            </p>
+            <p class="text-gray-700 mb-6">
+                <strong>Month 3:</strong> You add more URLs. Five APIs. Ten APIs. Twenty.
+                One queue. Twenty different rate limits. Some APIs allow 100 RPS, some allow 2.
+                The fast ones starve behind the slow ones. Everything is unbearable.
+            </p>
+            <p class="text-gray-700 mb-6">
+                <strong>Month 6:</strong> "We need queue-per-URL." You spin up a fleet of workers.
+                Each URL gets its own queue with its own rate limit. The architecture diagram now
+                requires a team to maintain. You need a DevOps hire.
+            </p>
+            <p class="text-gray-700 mb-6">
+                <strong>Month 9:</strong> The CTO signs a 10x contract. Traffic explodes.
+                Your queue-per-URL workers can't keep up. The single-server architecture
+                doesn't scale. You miss your son's birthday debugging Redis connection pools.
+            </p>
+            <p class="text-gray-700 mb-6">
+                <strong>Month 12:</strong> You cancel your vacation. Again.
+                The team implements Zookeeper for coordination, Redis for state,
+                and Kubernetes for orchestration. Six months of infrastructure work
+                to solve a problem that has nothing to do with your actual product.
+            </p>
+
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 my-6">
+                <p class="text-gray-900">
+                    Serverless should be painless and opsless&mdash;not managing a fucking factory of queues.
+                </p>
+            </div>
+
+            <p class="text-gray-700 mb-6">
+                <strong>Month 14:</strong> The CTO heard about this thing called EZThrottle.
+                "Can we go global? Multi-region?" You stare at your Zookeeper cluster.
+                Managed Redis alone is $1,000/month. Just for the storage layer.
+                You think about your original job description. You update your LinkedIn.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Or:
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-8 text-sm"><code>pip install ezthrottle</code></pre>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Why This Is Natural for the BEAM</h2>
+
+            <p class="text-gray-700 mb-4">
+                Here's the thing: queue-per-URL is a nightmare in most languages.
+            </p>
+            <p class="text-gray-700 mb-4">
+                In the BEAM? It's the obvious design.
+            </p>
+            <p class="text-gray-700 mb-4">
+                Erlang was built for telephone switches. A phone switch doesn't have "one queue for all calls."
+                It has a process per call. A process per connection. A process per subscriber.
+                The actor model makes this trivial&mdash;spawn a process, it handles its own state,
+                it fails in isolation without taking down its neighbors.
+            </p>
+            <p class="text-gray-700 mb-4">
+                EZThrottle does the same thing for URLs. Each destination gets its own process.
+                Its own rate limit tracking. Its own retry state. Millions of them, running concurrently,
+                coordinating through message passing instead of shared memory locks.
+            </p>
+            <p class="text-gray-700 mb-4">
+                And because EZThrottle runs on Fly.io, forwarding a request to another region
+                is just an API call. The Fly proxy handles the hard parts&mdash;anycast routing,
+                WireGuard tunnels between regions, health checking.
+            </p>
+            <p class="text-gray-700 mb-8">
+                What takes six months of Zookeeper and Redis in other stacks
+                is a weekend of Gleam code on the BEAM.
+            </p>
+
             <!-- Image 1: The problem -->
             <figure class="my-8">
                 <img src="/blog/images/failure-without-coordination.png" alt="Multiple services independently hitting a single upstream API" class="w-full rounded-lg shadow-lg">
@@ -340,6 +460,53 @@ result = (
             <p class="text-gray-700 mb-8">
                 If you want every request to fire as fast as possible, EZThrottle isn't for you.<br>
                 If you want to stop waking up to retry storms, it probably is.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">"But Isn't This a Single Point of Failure?"</h2>
+
+            <p class="text-gray-700 mb-4">
+                This is the second question everyone asks. It's a fair concern.
+            </p>
+            <p class="text-gray-700 mb-4">
+                But here's the thing: EZThrottle isn't a dependency. It's a <strong>reliability layer</strong>.
+            </p>
+            <p class="text-gray-700 mb-4">
+                Every SDK ships with <code class="bg-gray-100 px-2 py-1 rounded">forward_or_fallback()</code>.
+                If EZThrottle is unreachable, you fall back to whatever you were doing before:
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle
+import requests
+
+client = EZThrottle(api_key="your_api_key")
+
+# If EZThrottle is down, fall back to direct HTTP call
+result = client.forward_or_fallback(
+    fallback=lambda: requests.post(
+        "https://api.stripe.com/charges",
+        headers={"Authorization": "Bearer sk_live_..."},
+        json={"amount": 1000}
+    ),
+    url="https://api.stripe.com/charges",
+    method="POST",
+    headers={"Authorization": "Bearer sk_live_..."},
+    body='{"amount": 1000}'
+)</code></pre>
+
+            <p class="text-gray-700 mb-4">
+                If EZThrottle goes down:
+            </p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Your requests still go through (via fallback)</li>
+                <li>You lose the coordination features temporarily</li>
+                <li>You're back to independent retries until EZThrottle recovers</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                That's the worst case: you're back to where you started.
+            </p>
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                EZThrottle failing doesn't break your system. It just means you lose the extra reliability&mdash;temporarily.
             </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">What EZThrottle Is (and Isn't)</h2>
