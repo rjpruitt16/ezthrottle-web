@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EZThrottle: Making Failure Boring Again - EZThrottle Blog</title>
-    <meta name="description" content="Modern software fails with 429s, timeouts, and regions going dark. EZThrottle turns retries, rate limits, and region health into shared state.">
+    <meta name="description" content="EZThrottle is a multi-region HTTP proxy for external APIs. Race requests across regions, route around slow endpoints, and survive partial outages automatically.">
     <meta name="author" content="Rahmi Pruitt">
 
     <!-- Open Graph / Social -->
     <meta property="og:title" content="EZThrottle: Making Failure Boring Again">
-    <meta property="og:description" content="Modern software fails with 429s, timeouts, and regions going dark. EZThrottle turns retries into shared state.">
+    <meta property="og:description" content="EZThrottle is a multi-region HTTP proxy for external APIs. Race requests across regions, survive partial outages automatically.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://ezthrottle.network/blog/making-failure-boring-again">
     <meta name="twitter:card" content="summary_large_image">
@@ -53,94 +53,139 @@
 
         <!-- Content -->
         <div class="prose prose-lg max-w-none">
-            <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8">
-                <p class="text-gray-900 font-medium mb-4">
-                    You're getting paged at 2am because your retry logic just turned a rate limit into a cascading outage.
+
+            <!-- THE HOOK: Cloudflare analogy -->
+            <p class="text-xl text-gray-900 font-semibold mb-6">
+                You know how Cloudflare sits in front of your app and routes traffic to the fastest, healthiest origin?
+            </p>
+            <p class="text-xl text-gray-900 font-semibold mb-8">
+                EZThrottle does that for your <strong>outbound</strong> API calls.
+            </p>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+                <p class="text-blue-900 font-medium text-lg mb-2">
+                    EZThrottle is a multi-region HTTP proxy for external APIs.
                 </p>
-                <p class="text-gray-700 mb-4">
-                    1000 workers. All hit OpenAI's rate limit. All retrying independently.
-                </p>
-                <p class="text-gray-700 mb-2"><strong>What this costs you:</strong></p>
-                <ul class="list-disc pl-6 text-gray-700 space-y-1">
-                    <li>Workers run 10x longer (retrying instead of processing)</li>
-                    <li>Workflows fail mid-execution (restart from scratch)</li>
-                    <li>Tomorrow's bill: <strong>$15k</strong> in wasted compute + API calls</li>
-                </ul>
-                <p class="text-gray-700 mt-4 font-medium">
-                    Every. Single. Day.
+                <p class="text-blue-800">
+                    Your app calls EZThrottle. EZThrottle routes to the fastest, healthiest region of the destination API.
+                    If OpenAI us-east-1 is slow, we route to eu-west-1.
+                    If both are slow, we race them and take the fastest.
                 </p>
             </div>
 
-            <p class="text-xl text-gray-900 font-semibold mb-8">
-                This is normal. And it shouldn't be.
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Why "Just Retry on the Client" Doesn't Work</h2>
+
+            <p class="text-gray-700 mb-4">
+                Here's the scenario where client-side retry completely fails:
             </p>
+
+            <!-- Partial Outage Scenario -->
+            <div class="bg-gray-100 border-l-4 border-gray-400 p-6 mb-6">
+                <p class="font-bold text-gray-900 mb-3">Scenario: Partial Regional Outage</p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li>You're calling <code class="bg-white px-2 py-1 rounded">api.openai.com</code></li>
+                    <li>DNS routes you to us-east-1 (closest region)</li>
+                    <li>us-east-1 is having issues (slow, intermittent 500s)</li>
+                    <li>But it's not fully DOWN (some requests work)</li>
+                </ul>
+            </div>
+
+            <p class="text-gray-700 mb-4"><strong>With client-side retry:</strong></p>
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4 text-sm"><code>@retry(stop=stop_after_attempt(3))
+def call_openai():
+    return requests.post("https://api.openai.com/...")</code></pre>
+
+            <p class="text-gray-700 mb-4">What happens:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-1">
+                <li>Request 1 → us-east-1 (slow, 10 seconds, times out)</li>
+                <li>Retry 1 → us-east-1 again (DNS still routes here, still slow)</li>
+                <li>Retry 2 → us-east-1 again (still slow)</li>
+                <li><strong>After 30 seconds: FAIL</strong></li>
+            </ul>
+
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-8">
+                <p class="text-red-900 font-medium">User experience: 30 second wait, then failure.</p>
+            </div>
+
+            <p class="text-gray-700 mb-4"><strong>With EZThrottle:</strong></p>
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4 text-sm"><code>result = (
+    Step(client)
+    .url("https://api.openai.com/...")
+    .regions(["iad", "lax", "ord"])
+    .execution_mode("race")
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-4">What happens:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-1">
+                <li>Request sent to all 3 regions simultaneously</li>
+                <li>us-east-1 is slow... but lax responds in 100ms</li>
+                <li>lax wins the race, us-east-1 cancelled</li>
+                <li><strong>Total time: 100ms</strong></li>
+            </ul>
+
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-8">
+                <p class="text-green-900 font-medium">User experience: 100ms, success.</p>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 mb-8">
+                <p class="text-yellow-900 font-bold text-lg mb-2">The Comparison:</p>
+                <p class="text-yellow-800">Client-side retry: <strong>30 seconds → failure</strong></p>
+                <p class="text-yellow-800">EZThrottle: <strong>100ms → success</strong></p>
+                <p class="text-yellow-800 mt-3 text-sm">Client-side retry can't solve this. It doesn't have visibility into regional health. It just keeps hitting the same slow region.</p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Region Racing: The Feature You Didn't Know You Needed</h2>
+
+            <p class="text-gray-700 mb-4">
+                This is EZThrottle's killer feature. Send the same request to multiple regions simultaneously. Fastest one wins. Cancel the rest.
+            </p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+
+client = EZThrottle(api_key="your_api_key")
+
+result = (
+    Step(client)
+    .url("https://api.stripe.com/charges")
+    .method("POST")
+    .type(StepType.PERFORMANCE)
+    .regions(["iad", "lax", "ord"])
+    .execution_mode("race")
+    .webhooks([{"url": "https://your-app.com/webhook"}])
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-4">What this gives you:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li><strong>Survive partial outages</strong> - one region slow? Take another</li>
+                <li><strong>Sub-second failover</strong> - no waiting for timeouts</li>
+                <li><strong>Automatic regional health detection</strong> - EZThrottle learns which regions are healthy</li>
+                <li><strong>You only pay for the winner</strong> - losers are cancelled</li>
+            </ul>
 
             <p class="text-gray-700 mb-8">
-                I built EZThrottle because I got tired of pretending this was acceptable.
+                This isn't something a retry library can do. Client-side code can't race requests across regions it doesn't know exist.
             </p>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Problem Nobody Really Talks About</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Also: Coordinated Retries (The Bonus Feature)</h2>
 
             <p class="text-gray-700 mb-4">
-                Most systems deal with failure in isolation. Each service:
+                Once you're routing through EZThrottle, you also get coordinated retry logic across your entire fleet.
+            </p>
+            <p class="text-gray-700 mb-4">
+                The problem with client-side retries at scale:
             </p>
             <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
-                <li>sends a request</li>
-                <li>gets a 429 or timeout</li>
-                <li>retries on its own schedule</li>
-                <li>hopes for the best</li>
+                <li>1000 workers hit OpenAI's rate limit</li>
+                <li>1000 workers all retry independently</li>
+                <li>Thundering herd → retry storm → cascading failure</li>
             </ul>
 
             <p class="text-gray-700 mb-4">
-                This works... until it doesn't.
-            </p>
-            <p class="text-gray-700 mb-4">
-                At scale, independent retries turn into retry storms:
-            </p>
-            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
-                <li>rate limits get hammered</li>
-                <li>upstreams get slower</li>
-                <li>outages cascade</li>
-                <li>tail latency explodes</li>
-            </ul>
-
-            <p class="text-gray-700 mb-4">
-                The real issue isn't that APIs fail. It's that every client is blind to what every other client is experiencing.
+                With EZThrottle, one worker discovers the rate limit, and the shared state updates for everyone. No storm.
             </p>
 
-            <p class="text-xl font-semibold text-gray-900 mb-6">
-                Failure isn't shared state.
-            </p>
-
-            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">"Why Not Just Use Exponential Backoff?"</h2>
-
-            <p class="text-gray-700 mb-4">
-                This is the first question everyone asks. And it's a good one.
-            </p>
-            <p class="text-gray-700 mb-4">
-                Exponential backoff works beautifully when you have <strong>one client</strong> talking to <strong>one server</strong>.
-                Hit a rate limit, wait longer, try again. Problem solved.
-            </p>
-            <p class="text-gray-700 mb-4">
-                Now picture N clients hitting the same API.
-            </p>
-            <p class="text-gray-700 mb-4">
-                They all hit the rate limit at roughly the same time. They all start backing off independently.
-                They all retry after the backoff window... at roughly the same time. The thundering herd.
-            </p>
-            <p class="text-gray-700 mb-4">
-                Here's the math:
-            </p>
-            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
-                <li><strong>N clients</strong> each discover the rate limit independently</li>
-                <li>Each client retries 3 times = <strong>3N wasted requests</strong></li>
-                <li>The upstream sees 3N retry storms instead of controlled traffic</li>
-                <li>Your CPU spends cycles sleeping and retrying instead of handling real work</li>
-            </ul>
-            <p class="text-gray-700 mb-4">
-                EZThrottle sees the same rate limit <strong>once</strong>.
-                One client discovers it, the shared state updates, and everyone slows down together.
-            </p>
             <p class="text-xl font-semibold text-gray-900 mb-8">
                 N clients × 3 retries = 3N wasted requests.<br>
                 EZThrottle: ~1.
@@ -394,38 +439,6 @@ X-EZTHROTTLE-MAX-CONCURRENT: 10</code></pre>
                 <img src="/blog/images/ezthrottle-architecture.png" alt="EZThrottle coordinating requests across multiple regions" class="w-full rounded-lg shadow-lg">
                 <figcaption class="text-sm text-gray-500 mt-2 text-center">EZThrottle coordinates traffic across regions with consensus and controlled rate limiting</figcaption>
             </figure>
-
-            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Region Racing: Let the Fastest One Win</h2>
-
-            <p class="text-gray-700 mb-4">
-                Sometimes you don't want to wait. You just want the request to finish.
-            </p>
-            <p class="text-gray-700 mb-4">EZThrottle supports region racing:</p>
-            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
-                <li>send the same request to multiple regions</li>
-                <li>accept the first success</li>
-                <li>cancel the rest</li>
-            </ul>
-
-            <p class="text-gray-700 mb-4">Here's what that looks like:</p>
-            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
-
-client = EZThrottle(api_key="your_api_key")
-
-result = (
-    Step(client)
-    .url("https://api.example.com/endpoint")
-    .method("POST")
-    .type(StepType.PERFORMANCE)
-    .regions(["iad", "lax", "ord"])
-    .execution_mode("race")
-    .webhooks([{"url": "https://your-app.com/webhook"}])
-    .execute()
-)</code></pre>
-
-            <p class="text-gray-700 mb-8">
-                This isn't about chasing microbenchmarks. It's about <strong>predictable completion when the world is messy.</strong>
-            </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Two Ways to Use EZThrottle</h2>
 
