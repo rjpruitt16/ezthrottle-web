@@ -53,30 +53,37 @@
 
         <!-- Content -->
         <div class="prose prose-lg max-w-none">
-            <p class="text-xl text-gray-700 mb-8">
-                Modern software doesn't fail in exciting ways.<br>
-                It fails with 429s, timeouts, and regions quietly going dark.
-            </p>
+            <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8">
+                <p class="text-gray-900 font-medium mb-4">
+                    You're getting paged at 2am because your retry logic just turned a rate limit into a cascading outage.
+                </p>
+                <p class="text-gray-700 mb-4">
+                    1000 workers. All hit OpenAI's rate limit. All retrying independently.
+                </p>
+                <p class="text-gray-700 mb-2"><strong>What this costs you:</strong></p>
+                <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                    <li>Workers run 10x longer (retrying instead of processing)</li>
+                    <li>Workflows fail mid-execution (restart from scratch)</li>
+                    <li>Tomorrow's bill: <strong>$15k</strong> in wasted compute + API calls</li>
+                </ul>
+                <p class="text-gray-700 mt-4 font-medium">
+                    Every. Single. Day.
+                </p>
+            </div>
 
-            <p class="text-gray-700 mb-4">
-                And somehow we've all accepted that this means:
+            <p class="text-xl text-gray-900 font-semibold mb-8">
+                This is normal. And it shouldn't be.
             </p>
-            <ul class="list-disc pl-6 mb-8 text-gray-700 space-y-2">
-                <li>retry loops everywhere</li>
-                <li>exponential backoff copy-pasted into every codebase</li>
-                <li>someone eventually waking up at 2 a.m.</li>
-            </ul>
 
             <p class="text-gray-700 mb-8">
-                I built EZThrottle because I got tired of pretending this was normal.
+                I built EZThrottle because I got tired of pretending this was acceptable.
             </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Problem Nobody Really Talks About</h2>
 
             <p class="text-gray-700 mb-4">
-                Most systems deal with failure in isolation.
+                Most systems deal with failure in isolation. Each service:
             </p>
-            <p class="text-gray-700 mb-4">Each service:</p>
             <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
                 <li>sends a request</li>
                 <li>gets a 429 or timeout</li>
@@ -149,32 +156,38 @@
             </p>
             <p class="text-gray-700 mb-6">
                 <strong>Month 1:</strong> You have N clients fighting for quota Q on a single API.
-                Retry storms are killing you. Someone suggests a centralized queue.
+                Retry storms are killing you. Someone suggests a centralized queue.<br>
+                <span class="text-red-600 font-medium">Cost: $15k/month in wasted compute (workers retrying instead of working)</span>
             </p>
             <p class="text-gray-700 mb-6">
                 <strong>Month 2:</strong> You build the queue. It works! Requests flow through one bottleneck,
-                rate limiting is enforced, retries are controlled. Ship it. Victory beer.
+                rate limiting is enforced, retries are controlled. Ship it. Victory beer.<br>
+                <span class="text-green-600 font-medium">Cost drops to $3k/month. But now you're paying $2k/month for SQS.</span>
             </p>
             <p class="text-gray-700 mb-6">
                 <strong>Month 3:</strong> You add more URLs. Five APIs. Ten APIs. Twenty.
                 One queue. Twenty different rate limits. Some APIs allow 100 RPS, some allow 2.
-                The fast ones starve behind the slow ones. Everything is unbearable.
+                The fast ones starve behind the slow ones. Everything is unbearable.<br>
+                <span class="text-red-600 font-medium">Latency: 5 seconds per request (was 200ms). Customers complaining.</span>
             </p>
             <p class="text-gray-700 mb-6">
                 <strong>Month 6:</strong> "We need queue-per-URL." You spin up a fleet of workers.
                 Each URL gets its own queue with its own rate limit. The architecture diagram now
-                requires a team to maintain. You need a DevOps hire.
+                requires a team to maintain.<br>
+                <span class="text-red-600 font-medium">Cost: $8k/month infra + 1 DevOps engineer ($150k/year)</span>
             </p>
             <p class="text-gray-700 mb-6">
                 <strong>Month 9:</strong> The CTO signs a 10x contract. Traffic explodes.
                 Your queue-per-URL workers can't keep up. The single-server architecture
-                doesn't scale. You miss your son's birthday debugging Redis connection pools.
+                doesn't scale. You miss your son's birthday debugging Redis connection pools.<br>
+                <span class="text-red-600 font-medium">Cost: $25k/month infra + 2 more engineers ($300k/year)</span>
             </p>
             <p class="text-gray-700 mb-6">
                 <strong>Month 12:</strong> You cancel your vacation. Again.
                 The team implements Zookeeper for coordination, Redis for state,
                 and Kubernetes for orchestration. Six months of infrastructure work
-                to solve a problem that has nothing to do with your actual product.
+                to solve a problem that has nothing to do with your actual product.<br>
+                <span class="text-red-600 font-medium">Cost: $50k/month infra + team of 3 engineers ($500k/year)</span>
             </p>
 
             <div class="bg-red-50 border-l-4 border-red-500 p-4 my-6">
@@ -190,9 +203,10 @@
                 You think about your original job description. You update your LinkedIn.
             </p>
 
-            <p class="text-gray-700 mb-4">
-                Or:
-            </p>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 my-6">
+                <p class="text-gray-900 font-medium mb-2">Or with EZThrottle:</p>
+                <p class="text-gray-700">$50-500/month. Zero infrastructure. Multi-region included. Ship in an afternoon.</p>
+            </div>
 
             <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-8 text-sm"><code>pip install ezthrottle</code></pre>
 
@@ -413,23 +427,37 @@ result = (
                 This isn't about chasing microbenchmarks. It's about <strong>predictable completion when the world is messy.</strong>
             </p>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">FRUGAL vs PERFORMANCE (How Teams Actually Use This)</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Two Ways to Use EZThrottle</h2>
 
-            <p class="text-gray-700 mb-4">
-                Not every request needs maximum reliability.
+            <p class="text-gray-700 mb-6">
+                Not every request needs the same level of reliability. That's why EZThrottle supports two modes:
             </p>
-            <p class="text-gray-700 mb-4">EZThrottle supports two common patterns:</p>
-            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
-                <li><strong>FRUGAL:</strong> Try locally first. Forward only when things go wrong.</li>
-                <li><strong>PERFORMANCE:</strong> Always run through EZThrottle for distributed reliability.</li>
-            </ul>
 
-            <p class="text-gray-700 mb-4">Here's a FRUGAL example:</p>
-            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from ezthrottle import EZThrottle, Step, StepType
+            <!-- PERFORMANCE Mode -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-6">
+                <h3 class="font-bold text-blue-900 text-lg mb-2">PERFORMANCE Mode</h3>
+                <p class="text-blue-800 mb-3">Always route through EZThrottle. Every request gets multi-region racing, automatic retries, and webhook delivery.</p>
+                <p class="text-blue-700 text-sm"><strong>Use when:</strong> Reliability &gt; cost. Payment processing, critical notifications, anything where failure means lost revenue.</p>
+            </div>
 
-client = EZThrottle(api_key="your_api_key")
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>result = (
+    Step(client)
+    .url("https://api.stripe.com/charges")
+    .type(StepType.PERFORMANCE)
+    .regions(["iad", "lax", "ord"])
+    .execution_mode("race")
+    .webhooks([{"url": "https://your-app.com/webhook"}])
+    .execute()
+)</code></pre>
 
-result = (
+            <!-- FRUGAL Mode -->
+            <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-6">
+                <h3 class="font-bold text-green-900 text-lg mb-2">FRUGAL Mode</h3>
+                <p class="text-green-800 mb-3">Execute locally first. Only forward to EZThrottle when you hit rate limits or errors. Pay nothing when things work.</p>
+                <p class="text-green-700 text-sm"><strong>Use when:</strong> Cost &gt; reliability. Analytics, logging, non-critical APIs with 95%+ success rates.</p>
+            </div>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>result = (
     Step(client)
     .url("https://api.example.com/endpoint")
     .type(StepType.FRUGAL)
@@ -439,7 +467,7 @@ result = (
 )</code></pre>
 
             <p class="text-gray-700 mb-8">
-                This lets teams start cheap and gradually move reliability into infrastructure instead of application code.
+                Most teams start with FRUGAL for non-critical paths, then flip to PERFORMANCE for anything that wakes them up at night.
             </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Tradeoff EZThrottle Makes (On Purpose)</h2>
@@ -528,6 +556,26 @@ result = client.forward_or_fallback(
             <p class="text-gray-700 mb-8">
                 Requests live in memory, move through the system, and disappear. There's nothing to mine, leak, or hoard.
             </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Who Needs This?</h2>
+
+            <p class="text-gray-700 mb-4"><strong>You probably need EZThrottle if:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>You're making &gt;1M API calls/month to external services</li>
+                <li>You have &gt;50 workers/instances calling the same APIs</li>
+                <li>You've been rate limited and it cascaded into an outage</li>
+                <li>You're managing queues just to handle retries</li>
+                <li>You're calling AI APIs (OpenAI, Anthropic, etc.) at scale</li>
+                <li>You're building AI agents that make dozens of API calls per workflow</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4"><strong>You probably don't need this if:</strong></p>
+            <ul class="list-disc pl-6 mb-8 text-gray-700 space-y-2">
+                <li>Single server making occasional API calls</li>
+                <li>&lt;10k requests/month</li>
+                <li>You only call APIs you control (not external rate limits)</li>
+                <li>Exponential backoff is genuinely working fine for you</li>
+            </ul>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Why This Matters</h2>
 
