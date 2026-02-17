@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Handle Multi-Region API Failures in LangGraph - EZThrottle Blog</title>
+    <meta name="description" content="Part 2 of making LangGraph workflows production-ready. What happens when US-EAST-1 goes down? How to automatically reroute around regional failures.">
+    <meta name="author" content="Rahmi Pruitt">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="How to Handle Multi-Region API Failures in LangGraph">
+    <meta property="og:description" content="US-EAST-1 went down. Somebody got fired. Here's how to make your LangGraph workflows survive regional failures automatically.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ezthrottle.network/blog/multi-region-api-failures-langgraph">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@RahmiPruitt">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <div class="bg-white border-b">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-900">EZThrottle</a>
+                <div class="space-x-6 text-sm">
+                    <a href="/blog" class="text-gray-600 hover:text-black">Blog</a>
+                    <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
+                    <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
+                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
+                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article -->
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- Header -->
+        <header class="mb-12">
+            <p class="text-sm text-gray-500 mb-2">
+                <a href="/blog" class="hover:text-black">&larr; Back to Blog</a>
+            </p>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                How to Handle Multi-Region API Failures in LangGraph
+            </h1>
+            <p class="text-sm text-gray-500 mb-4">
+                Part 2 of 2: Making LangGraph workflows production-ready
+            </p>
+            <div class="flex items-center text-sm text-gray-500">
+                <span>By <a href="https://twitter.com/RahmiPruitt" target="_blank" class="text-blue-600 hover:underline">@RahmiPruitt</a></span>
+                <span class="mx-2">&middot;</span>
+                <time datetime="2026-02-16">February 16, 2026</time>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="prose prose-lg max-w-none">
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">US-EAST-1 Went Down. Somebody Got Fired.</h2>
+
+            <p class="text-gray-700 mb-4">
+                US-EAST-1 went down. Somebody got fired. Millions were lost due to a misconfiguration.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                This happens every year. AWS, Azure, GCP - everyone has regional failures.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                The question isn't "will a region fail?" It's "what happens to your LangGraph workflows when it does?"
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Cloudflare's global CDN automatically finds the next healthiest node when a region fails. Your static content stays up.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                But your API calls? Your LangGraph workflows calling OpenRouter, Anthropic, OpenAI?
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                They crash.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                What if API failures were automatically rerouted the same way Cloudflare routes traffic - without you doing anything?
+            </p>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8">
+                <p class="text-gray-700">
+                    This is Part 2 of making LangGraph workflows production-ready. <a href="/blog/stop-losing-langgraph-progress" class="text-blue-600 underline">Part 1</a> covered 429 errors and rate limits. This covers the harder problem: regional failures you can't see coming.
+                </p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Problem With "Not Down"</h2>
+
+            <p class="text-gray-700 mb-4">
+                The worst outages aren't the dramatic ones where everything is on fire.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                They're the invisible ones.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Your LangGraph workflow isn't crashing. It's just... slow.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Step 3 takes 30 seconds instead of 2. Step 5 times out after 60 seconds. Step 7 eventually succeeds, but took 45 seconds.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                No errors in the logs. No 429s. No 500s. Just slow. Painfully slow.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                This is a partial outage.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                DNS routed you to <code class="bg-gray-100 px-2 py-1 rounded">api.openai.com</code> &rarr; US-East. US-East isn't DOWN (health checks pass). US-East is just SLOW (10s response instead of 2s).
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>Why client-side retries can't help:</strong></p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from litellm import completion
+from tenacity import retry, stop_after_attempt
+
+@retry(stop=stop_after_attempt(3))
+def call_openai():
+    return completion(
+        model="gpt-4",
+        messages=[{"role": "user", "content": "..."}]
+    )
+
+# What happens when US-East is slow:
+# Request 1 → US-East (slow, 10s)
+# Retry 1 → US-East again (DNS still routes here, slow, 10s)
+# Retry 2 → US-East again (still slow, 10s)
+# Total: 30 seconds, then maybe succeeds or times out</code></pre>
+
+            <p class="text-gray-700 mb-4">You can't detect this with:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Status codes (200 OK, just slow)</li>
+                <li>Health checks (endpoint responds, just slowly)</li>
+                <li>Retries (keep hitting the same slow region)</li>
+            </ul>
+
+            <div class="bg-gray-100 border-l-4 border-gray-400 p-6 mb-8">
+                <p class="text-gray-700 italic">
+                    <strong>The trap:</strong> "Everything is working. It's just slow. Must be our code."
+                </p>
+                <p class="text-gray-700 mt-2">
+                    It's not your code. It's infrastructure you can't see.
+                </p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">What You're Actually Fighting</h2>
+
+            <p class="text-gray-700 mb-4">Modern LLM APIs deploy across multiple regions:</p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li><code class="bg-gray-100 px-2 py-1 rounded">api.openai.com</code> &rarr; US-East, US-West, EU-West</li>
+                <li><code class="bg-gray-100 px-2 py-1 rounded">api.anthropic.com</code> &rarr; US-East, US-West, EU</li>
+                <li><code class="bg-gray-100 px-2 py-1 rounded">openrouter.ai</code> &rarr; Global anycast routing</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                DNS decides which region you hit. You don't control this. Your code doesn't see it.
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>When one region degrades:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Some of your workers hit the slow region (bad experience)</li>
+                <li>Some hit healthy regions (everything's fine)</li>
+                <li>Your monitoring shows inconsistent latency</li>
+                <li>Support tickets: "It's slow for some requests but not others"</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                You can't fix this with application code alone.
+            </p>
+
+            <p class="text-gray-700 mb-4">You need:</p>
+            <ol class="list-decimal pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Visibility into which regions are healthy</li>
+                <li>Ability to route around degraded regions</li>
+                <li>Automatic failover without manual intervention</li>
+            </ol>
+
+            <p class="text-gray-700 mb-4"><strong>The traditional solution:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Set up health checks in multiple regions</li>
+                <li>Monitor API response times globally</li>
+                <li>Manually update DNS or routing rules when problems detected</li>
+                <li>Wake up at 3am to make routing decisions</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                <strong>But that's REACTIVE.</strong> Problem happens, then you scramble to fix it.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                <strong>You want PROACTIVE.</strong> System detects and routes around problems automatically.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Automatic Regional Rerouting</h2>
+
+            <p class="text-gray-700 mb-4">Here's the pattern: try one region. If it fails or times out, automatically try another.</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from langgraph.graph import StateGraph
+from ezthrottle import EZThrottle, Step, StepType
+
+ez = EZThrottle(api_key="your_key")
+
+def call_llm_node(state):
+    result = (
+        Step(ez)
+        .url("https://api.openai.com/v1/chat/completions")
+        .method("POST")
+        .headers({
+            "Authorization": f"Bearer {OPENAI_KEY}",
+            "Content-Type": "application/json"
+        })
+        .body({
+            "model": "gpt-4",
+            "messages": state["messages"]
+        })
+        .type(StepType.PERFORMANCE)
+        .regions(["iad", "lax", "ord"])  # US-East, US-West, Chicago
+        .region_policy("fallback")  # Try one, reroute on error
+        .webhooks([{"url": "https://yourapp.com/langgraph-resume"}])
+        .idempotent_key(f"workflow_{state['workflow_id']}_step_{state['step']}")
+        .execute()
+    )
+
+    return {"job_id": result["job_id"], "status": "waiting"}
+
+# What happens if US-East (iad) returns 500:
+# 0ms:   Try iad
+# 100ms: iad returns 500
+# 100ms: Automatically try lax
+# 2100ms: lax succeeds
+# Workflow continues from step checkpoint
+
+# Cost: 1 request normally, 2 only on errors
+# Your workflow survived a regional failure automatically</code></pre>
+
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                No manual intervention. No DNS changes. No on-call pages.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                The coordination layer detects the failure and routes around it.
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>Webhook handler (resumes workflow):</strong></p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from fastapi import FastAPI, Request, BackgroundTasks
+
+app = FastAPI()
+
+@app.post("/langgraph-resume")
+async def resume_workflow(request: Request, background_tasks: BackgroundTasks):
+    data = await request.json()
+    workflow_id = data["metadata"]["workflow_id"]
+
+    if data["status"] == "success":
+        llm_response = json.loads(data["response"]["body"])
+
+        # Resume in background (don't block webhook)
+        background_tasks.add_task(
+            continue_workflow,
+            workflow_id,
+            llm_response
+        )
+
+    return {"ok": True}
+
+async def continue_workflow(workflow_id: str, llm_response: dict):
+    agent.update_state(workflow_id, {
+        "messages": [..., llm_response],
+        "status": "complete"
+    })
+
+    await agent.ainvoke({"workflow_id": workflow_id})</code></pre>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Combining Regional Rerouting + Provider Fallbacks</h2>
+
+            <p class="text-gray-700 mb-4">The most resilient pattern: regional rerouting for your primary API, provider fallback if all regions fail.</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code># Fallback to Anthropic if all OpenAI regions fail
+anthropic_fallback = (
+    Step(ez)
+    .url("https://api.anthropic.com/v1/messages")
+    .method("POST")
+    .headers({
+        "x-api-key": ANTHROPIC_KEY,
+        "anthropic-version": "2023-06-01"
+    })
+    .body({
+        "model": "claude-3-5-sonnet-20241022",
+        "messages": state["messages"]
+    })
+)
+
+result = (
+    Step(ez)
+    .url("https://api.openai.com/v1/chat/completions")
+    .regions(["iad", "lax", "ord"])
+    .region_policy("fallback")  # Try one region, reroute on error
+    .fallback(anthropic_fallback, trigger_on_error=[500, 502, 503])
+    .webhooks([{"url": "https://yourapp.com/resume"}])
+    .execute()
+)
+
+# What happens if OpenAI US-East is down:
+# Try iad → 500
+# Try lax → succeeds
+# Anthropic never fires (not needed)
+
+# What happens if ALL OpenAI regions fail:
+# Try iad → 500
+# Try lax → 500
+# Try ord → 500
+# Fallback to Anthropic → succeeds
+
+# Cost: Only pays for what's needed (1-4 requests)
+# Your workflow survived both regional AND provider failures</code></pre>
+
+            <p class="text-gray-700 mb-8">
+                This gives you multi-layer resilience without burning through quota.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Advanced: Regional Racing (When Queue Depth Matters)</h2>
+
+            <p class="text-gray-700 mb-4">
+                There's a second pattern - regional racing - where you send the same request to multiple regions simultaneously and take the fastest response.
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>When this helps:</strong></p>
+
+            <p class="text-gray-700 mb-4">
+                If you're using a shared coordination layer (like the EZThrottle community instance), different regions might have different queue depths at any moment:
+            </p>
+
+            <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>IAD queue: 200 jobs waiting
+LAX queue: 50 jobs waiting
+ORD queue: 500 jobs waiting
+
+Without racing:
+- Routed to IAD (closest)
+- Waits behind 200 jobs
+- Takes 60+ seconds
+
+With racing:
+- Fires to all 3 regions
+- LAX has shortest queue
+- LAX completes in 15 seconds
+- Cancel IAD and ORD (best effort)</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>The tradeoff:</strong></p>
+
+            <p class="text-gray-700 mb-4">
+                Racing costs 2-3&times; in API calls (you might pay for multiple responses even though you only use one, since cancellation is best-effort).
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>Use racing when:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Latency is critical (user-facing chat)</li>
+                <li>You have quota headroom (not near rate limits)</li>
+                <li>Shared infrastructure creates variable queue depths</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4"><strong>Use rerouting when:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Cost matters (quota-constrained)</li>
+                <li>Background processing (not user-facing)</li>
+                <li>You want reliability without burning quota</li>
+            </ul>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                Most LangGraph users should start with rerouting, not racing.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">What This Means For Operations</h2>
+
+            <p class="text-gray-700 mb-4"><strong>Without regional coordination:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Engineers debug "why is it slow for some workflows?"</li>
+                <li>Manual intervention to route around bad regions</li>
+                <li>On-call pages when regions degrade</li>
+                <li>Post-mortems about "undetectable slowness in US-East"</li>
+                <li>Lost agent progress due to timeouts</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4"><strong>With regional coordination:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>System automatically routes around slow/failing regions</li>
+                <li>No manual intervention needed</li>
+                <li>No on-call pages for regional issues</li>
+                <li>Dashboard shows: "US-East was down 2-4pm, auto-routed to US-West"</li>
+                <li>Workflows survive without restarting</li>
+            </ul>
+
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                This is Layer 7 automation.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Regional failures become boring. Not "all hands on deck." Just: "System compensated automatically, fix when convenient."
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                Engineers go home at 5pm. Infrastructure handles it.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Choice</h2>
+
+            <p class="text-gray-700 mb-4"><strong>Build it yourself:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Health checks across multiple regions</li>
+                <li>Routing logic to detect and avoid bad regions</li>
+                <li>Coordination layer for automatic rerouting</li>
+                <li>Webhook delivery infrastructure</li>
+                <li>Ongoing maintenance as your agents scale</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4"><strong>Or:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Focus on your agents</li>
+                <li>Let infrastructure handle reliability</li>
+                <li>Go home at 5pm</li>
+            </ul>
+
+            <p class="text-gray-700 mb-8">
+                Same choice as <a href="/blog/stop-losing-langgraph-progress" class="text-blue-600 hover:underline">Part 1</a>. Different problem.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Getting Started</h2>
+
+            <p class="text-gray-700 mb-4">If you want regional rerouting without building infrastructure:</p>
+
+            <p class="text-gray-700 mb-4">
+                <strong>SDKs:</strong>
+                <a href="https://github.com/rjpruitt16/ezthrottle-python" class="text-blue-600 hover:underline">Python</a> |
+                <a href="https://github.com/rjpruitt16/ezthrottle-node" class="text-blue-600 hover:underline">Node.js</a> |
+                <a href="https://github.com/rjpruitt16/ezthrottle-go" class="text-blue-600 hover:underline">Go</a>
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                <strong>Free tier:</strong> 1M requests/month at <a href="https://www.ezthrottle.network" class="text-blue-600 hover:underline">ezthrottle.network</a>
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Or build it yourself: <a href="/blog/making-failure-boring-again" class="text-blue-600 hover:underline">Architecture details</a>
+            </p>
+
+            <p class="text-gray-700 mb-4"><strong>Related reading:</strong></p>
+            <ul class="list-disc pl-6 mb-8 text-gray-700 space-y-2">
+                <li>Part 1: <a href="/blog/stop-losing-langgraph-progress" class="text-blue-600 hover:underline">Stop Losing LangGraph Progress to 429 Errors</a></li>
+                <li>Deep dive: <a href="/blog/making-failure-boring-again" class="text-blue-600 hover:underline">Making Failure Boring Again</a></li>
+                <li>Advanced workflows: <a href="/blog/serverless-2-rip-operations" class="text-blue-600 hover:underline">Serverless 2.0: RIP Operations</a></li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">My Mission</h2>
+
+            <p class="text-gray-700 mb-4">
+                US-EAST-1 will go down again. So will US-WEST-2. So will every region.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                The question isn't "will it happen?" It's "what happens to your workflows when it does?"
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Right now: Engineers debug at 3am. Workflows restart from step 1. Progress lost.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                This is what Layer 7 automation means:
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Regional failures handled automatically. Traffic reroutes without human decisions. Workflows survive without manual intervention.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Infrastructure that just works. Agents that run for months without pages. Engineers who go home at 5pm.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                That's what I'm building toward.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Use it or build it yourself.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                Just stop making engineers babysit regional failures.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                Find me on X: <a href="https://twitter.com/RahmiPruitt" class="text-blue-600 hover:underline">@RahmiPruitt</a>
+            </p>
+
+        </div>
+    </article>
+
+    <!-- CTA -->
+    <div class="bg-black text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Survive Regional Failures Automatically</h2>
+            <p class="text-xl mb-8">Start with 1 million free requests. No credit card required.</p>
+            <a href="/signup"
+               class="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                Start Free &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
+            <p class="font-semibold text-gray-900">&copy; 2026 EZThrottle. TCP for APIs. The World's First API Aqueduct&trade;</p>
+            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="hover:text-black">Home</a>
+                <a href="/blog" class="hover:text-black">Blog</a>
+                <a href="/faq" class="hover:text-black">FAQ</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" target="_blank" class="hover:text-black">SDKs</a>
+                <a href="https://twitter.com/RahmiPruitt" target="_blank" class="hover:text-black">Twitter</a>
+                <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-black">LinkedIn</a>
+                <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-black">YouTube</a>
+                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Contact</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
