@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stop Losing LangGraph Progress to 429 Errors - EZThrottle Blog</title>
+    <meta name="description" content="How to scale AI agents without burning out engineers. Make LangGraph workflows production-ready with coordinated retries and webhook-based resumption.">
+    <meta name="author" content="Rahmi Pruitt">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Stop Losing LangGraph Progress to 429 Errors">
+    <meta property="og:description" content="How to scale AI agents without burning out engineers. Part 1 of 2: Making LangGraph workflows production-ready.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ezthrottle.network/blog/stop-losing-langgraph-progress">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@RahmiPruitt">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <div class="bg-white border-b">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-900">EZThrottle</a>
+                <div class="space-x-6 text-sm">
+                    <a href="/blog" class="text-gray-600 hover:text-black">Blog</a>
+                    <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
+                    <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
+                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
+                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article -->
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- Header -->
+        <header class="mb-12">
+            <p class="text-sm text-gray-500 mb-2">
+                <a href="/blog" class="hover:text-black">&larr; Back to Blog</a>
+            </p>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                Stop Losing LangGraph Progress to 429 Errors
+            </h1>
+            <p class="text-xl text-gray-600 mb-4">
+                How to Scale Agents Without Burning Out Engineers
+            </p>
+            <p class="text-sm text-gray-500 mb-4">
+                Part 1 of 2: Making LangGraph workflows production-ready
+            </p>
+            <div class="flex items-center text-sm text-gray-500">
+                <span>By <a href="https://twitter.com/RahmiPruitt" target="_blank" class="text-blue-600 hover:underline">@RahmiPruitt</a></span>
+                <span class="mx-2">&middot;</span>
+                <time datetime="2026-02-16">February 16, 2026</time>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="prose prose-lg max-w-none">
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Why Your Agents Don't Scale</h2>
+
+            <p class="text-gray-700 mb-4">
+                I've seen genuinely nice people become assholes because they get paged every weekend. I've seen organizations play Hunger Games when leadership asks who caused the post-mortem.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                The reason your agents don't scale is the same reason serverless doesn't scale.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-6">
+                Serverless doesn't mean operationless.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                You still need retry logic. You still need rate limit handling. You still need coordination across workers. You still need someone to wake up at 3am when it breaks.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                LangGraph handles state management, workflow orchestration, and complex agent logic beautifully.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                But when OpenRouter returns 429 at step 7 of your workflow, LangGraph can't help you. Your workflow crashes. You restart from step 1. Your engineers debug why 100 workers created a retry storm.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                At some point, someone suggests: "Let's build a queue."
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Queue You'll Eventually Build</h2>
+
+            <p class="text-gray-700 mb-4">
+                If you want agents to scale without churning through engineers, you'll need some mechanism for queuing. Not optional. It's a real infrastructure problem.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                The right architecture is queue-per-URL. Each external dependency gets its own queue with its own rate limits. Stripe gets 100 RPS. OpenAI gets 50 RPS. They don't interfere with each other.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                This is doable. It's not magic. It's ~2000 lines of code plus distributed state management plus health checking plus monitoring.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                But here's the part nobody mentions: it's not the time to write it that kills you. It's the ongoing maintenance.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Those queues need to scale as your business grows. They need debugging when they break. They need someone on-call when they fail at 2am. They need a team.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                You can build this. Many companies do.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                But now you're in the infrastructure business, not the AI agent business.
+            </p>
+
+            <div class="bg-gray-100 border-l-4 border-gray-400 p-6 mb-8">
+                <p class="text-gray-700">
+                    Netflix didn't become Netflix by managing data centers. They specialized in streaming video and let AWS handle infrastructure.
+                </p>
+                <p class="text-gray-700 mt-2">
+                    Same principle here.
+                </p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">What You Have Today</h2>
+
+            <p class="text-gray-700 mb-4">Here's what most LangGraph workflows look like:</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from langgraph.graph import StateGraph
+from litellm import completion
+
+def call_llm_node(state):
+    try:
+        response = completion(
+            model="anthropic/claude-3.5-sonnet",
+            messages=state["messages"],
+            fallbacks=["openai/gpt-4"]
+        )
+        return {"messages": state["messages"] + [response]}
+    except RateLimitError:
+        raise  # Workflow crashes</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>What happens when OpenRouter rate limits at step 7:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Sequential fallback: Claude times out (5s), THEN try GPT-4 (5s) = 10s wasted</li>
+                <li>Limited to your account: All fallbacks hit YOUR quota</li>
+                <li>No coordination: 100 workers retry independently (retry storm)</li>
+                <li>Progress lost: Restart from step 1</li>
+            </ul>
+
+            <p class="text-gray-700 mb-8">
+                This works fine at 10 requests/day. It breaks at 1000 requests/day.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">What You Actually Want</h2>
+
+            <p class="text-gray-700 mb-4">
+                <strong>Multi-provider, multi-account fallbacks that race instead of waiting sequentially.</strong>
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                When your primary OpenRouter account hits rate limits, you want the system to automatically try:
+            </p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Your backup OpenRouter account</li>
+                <li>Direct Anthropic API</li>
+                <li>Direct OpenAI API</li>
+                <li>Whichever other providers you've configured</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4">
+                All racing simultaneously. Fastest response wins.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                <strong>Coordinated retries across all your workers</strong> so 100 instances don't create a retry storm.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                <strong>Webhook-based resumption</strong> so your LangGraph workflow doesn't block waiting for responses.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                <strong>Idempotent execution</strong> so a 429 at step 7 resumes at step 7, not step 1.
+            </p>
+
+            <p class="text-gray-700 mb-4">Here's what that looks like:</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>def call_llm_node(state):
+    result = (
+        Step(ez)
+        .url("https://openrouter.ai/api/v1/chat/completions")
+        .method("POST")
+        .headers({"Authorization": f"Bearer {OPENROUTER_KEY}"})
+        .body({
+            "model": "anthropic/claude-3.5-sonnet",
+            "messages": state["messages"]
+        })
+        .type(StepType.PERFORMANCE)
+        .fallback_on_error([429, 500, 503])
+        .webhooks([{"url": "https://yourapp.com/langgraph-resume"}])
+        .idempotent_key(f"workflow_{state['workflow_id']}_step_{state['step']}")
+        .execute()
+    )
+
+    return {"job_id": result["job_id"], "status": "waiting"}</code></pre>
+
+            <p class="text-gray-700 mb-8">
+                Behind the scenes, this coordinates retries across all workers, races multiple providers and accounts, and delivers results via webhook when ready.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                You could build this coordination yourself. Or you could ship agents.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Fallback Racing</h2>
+
+            <p class="text-gray-700 mb-4">Sequential fallbacks waste time. You want racing.</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code># Define fallback chain
+anthropic = Step(ez).url("https://api.anthropic.com/v1/messages")
+
+openai = (
+    Step(ez)
+    .url("https://api.openai.com/v1/chat/completions")
+    .fallback(anthropic, trigger_on_timeout=3000)  # Race after 3s
+)
+
+result = (
+    Step(ez)
+    .url("https://openrouter.ai/...")
+    .fallback(openai, trigger_on_error=[429, 500])
+    .execute()
+)</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>Timeline when OpenRouter returns 429:</strong></p>
+
+            <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>0ms:    OpenRouter tries
+100ms:  OpenRouter 429 → OpenAI fallback fires
+100ms:  OpenRouter retrying + OpenAI both racing
+3100ms: OpenAI slow → Anthropic fires
+3100ms: All three racing
+3200ms: Anthropic wins, others cancelled</code></pre>
+
+            <p class="text-gray-700 mb-4">
+                All providers race after their triggers fire. Fastest wins.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                You can't do this with client-side retries. They're sequential by design.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Resuming Workflows with Webhooks</h2>
+
+            <p class="text-gray-700 mb-4">Your workflow doesn't block. It continues, and webhooks resume it when ready.</p>
+
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm"><code>from fastapi import FastAPI, Request, BackgroundTasks
+
+app = FastAPI()
+
+@app.post("/langgraph-resume")
+async def resume_workflow(request: Request, background_tasks: BackgroundTasks):
+    data = await request.json()
+    workflow_id = data["metadata"]["workflow_id"]
+
+    if data["status"] == "success":
+        llm_response = json.loads(data["response"]["body"])
+
+        # Resume in background (don't block webhook)
+        background_tasks.add_task(
+            continue_workflow,
+            workflow_id,
+            llm_response
+        )
+
+    return {"ok": True}
+
+async def continue_workflow(workflow_id: str, llm_response: dict):
+    # Update LangGraph state
+    agent.update_state(workflow_id, {
+        "messages": [..., llm_response],
+        "status": "complete"
+    })
+
+    # Continue from next step
+    await agent.ainvoke({"workflow_id": workflow_id})</code></pre>
+
+            <p class="text-gray-700 mb-4"><strong>The pattern:</strong></p>
+            <ol class="list-decimal pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Submit to coordination layer &rarr; returns immediately</li>
+                <li>Workflow continues with other work</li>
+                <li>Webhook fires when LLM responds</li>
+                <li>Resume workflow from checkpoint</li>
+            </ol>
+
+            <p class="text-gray-700 mb-8">
+                No blocking. No retry storms. No lost progress.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">What the Industry Actually Needs</h2>
+
+            <p class="text-gray-700 mb-4">
+                The industry needs agents that can be trusted to run for months and years without human intervention.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                That means Layer 7 (HTTP) needs to be automated. Retries, rate limits, failover - all handled at the infrastructure layer, not in application code.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Right now, most teams write retry logic in every service. When it breaks, engineers get paged. When traffic spikes, retry storms happen. When providers have outages, everything falls over.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                This doesn't scale. Not the technology - the people.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                You can build coordination infrastructure yourself. You can dedicate a team to maintaining it. Some companies do.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                Or you can treat it like AWS treats compute: infrastructure you don't manage.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">The Choice</h2>
+
+            <p class="text-gray-700 mb-4"><strong>Build it yourself:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Queue per URL/dependency (the right architecture)</li>
+                <li>Distributed state coordination</li>
+                <li>Health checking and failover</li>
+                <li>Ongoing maintenance as you scale</li>
+                <li>A team to own it</li>
+            </ul>
+
+            <p class="text-gray-700 mb-4"><strong>Or:</strong></p>
+            <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Focus on agents</li>
+                <li>Let infrastructure handle reliability</li>
+                <li>Go home at 5pm</li>
+            </ul>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                Netflix chose streaming over data centers. What will you choose?
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Getting Started</h2>
+
+            <p class="text-gray-700 mb-4">If you want the patterns above without building infrastructure:</p>
+
+            <p class="text-gray-700 mb-4">
+                <strong>SDKs:</strong>
+                <a href="https://github.com/rjpruitt16/ezthrottle-python" class="text-blue-600 hover:underline">Python</a> |
+                <a href="https://github.com/rjpruitt16/ezthrottle-node" class="text-blue-600 hover:underline">Node.js</a> |
+                <a href="https://github.com/rjpruitt16/ezthrottle-go" class="text-blue-600 hover:underline">Go</a>
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                <strong>Free tier:</strong> 1M requests/month at <a href="https://www.ezthrottle.network" class="text-blue-600 hover:underline">ezthrottle.network</a>
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                The coordination layer handles 20 accounts across 4 providers working like one pool.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                Or build it yourself: <a href="/blog/making-failure-boring-again" class="text-blue-600 hover:underline">Architecture details</a>
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">My Mission</h2>
+
+            <p class="text-gray-700 mb-4">
+                I'm working to help the industry write scalable serverless software without needing to turn on more servers and with minimal operations.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Engineers shouldn't wake up at 3am because OpenRouter rate limited. They shouldn't lose weekends debugging retry storms. They shouldn't sacrifice time with family maintaining infrastructure that leadership calls "good enough."
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Layer 7 should be automated. Agents should run for months without human intervention. Engineers should go home at 5pm.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                That's what I'm building toward.
+            </p>
+
+            <p class="text-gray-700 mb-8">
+                Use it or don't. Build it yourself or don't.
+            </p>
+
+            <p class="text-xl font-semibold text-gray-900 mb-8">
+                But please: stop letting infrastructure steal your time.
+            </p>
+
+            <p class="text-gray-700 mb-4">
+                Find me on X: <a href="https://twitter.com/RahmiPruitt" class="text-blue-600 hover:underline">@RahmiPruitt</a>
+            </p>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mt-12 mb-8">
+                <p class="text-blue-900 font-medium">
+                    <strong>Coming next:</strong> Part 2 - Surviving Regional Failures and Partial Outages
+                </p>
+            </div>
+
+            <p class="text-4xl text-center mb-8">
+                &#x1F99E;
+            </p>
+
+        </div>
+    </article>
+
+    <!-- CTA -->
+    <div class="bg-black text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Stop Losing Progress to 429s</h2>
+            <p class="text-xl mb-8">Start with 1 million free requests. No credit card required.</p>
+            <a href="/signup"
+               class="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                Start Free &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
+            <p class="font-semibold text-gray-900">&copy; 2026 EZThrottle. TCP for APIs. The World's First API Aqueduct&trade;</p>
+            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="hover:text-black">Home</a>
+                <a href="/blog" class="hover:text-black">Blog</a>
+                <a href="/faq" class="hover:text-black">FAQ</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
+                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" target="_blank" class="hover:text-black">SDKs</a>
+                <a href="https://twitter.com/RahmiPruitt" target="_blank" class="hover:text-black">Twitter</a>
+                <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-black">LinkedIn</a>
+                <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-black">YouTube</a>
+                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Contact</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
