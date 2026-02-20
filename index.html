@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EZThrottle - TCP for APIs</title>
+    <title>EZThrottle - Multi-Region API Proxy | Automatic Retries & Failover</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50">
@@ -24,18 +24,37 @@
 
             <div class="text-center">
                 <h1 class="text-5xl font-bold text-gray-900 mb-4">
-                    EZThrottle
+                    When APIs Fail, We Retry
                 </h1>
-                <p class="text-2xl text-gray-600 mb-2">
-                    TCP for APIs
+                <p class="text-2xl text-gray-600 mb-6">
+                    Multi-region HTTP proxy for your outbound API calls
                 </p>
-                <p class="text-xl text-gray-500 mb-8">
-                    The World's First API Aqueduct™
+
+                <!-- The 1-second explanation -->
+                <div class="max-w-2xl mx-auto mb-8 text-left bg-gray-50 rounded-lg p-6 border">
+                    <div class="grid grid-cols-2 gap-4 text-lg">
+                        <div class="text-gray-600">OpenAI returns 429?</div>
+                        <div class="font-semibold text-gray-900">We queue and retry.</div>
+                        <div class="text-gray-600">us-east-1 goes down?</div>
+                        <div class="font-semibold text-gray-900">We reroute to us-west.</div>
+                        <div class="text-gray-600">Stripe times out?</div>
+                        <div class="font-semibold text-gray-900">We try another region.</div>
+                    </div>
+                </div>
+
+                <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-6">
+                    <strong>Like Cloudflare, but for outbound.</strong> Route your external API calls through our edge network.
+                    We handle rate limits, retries, and regional failures so you don't have to.
                 </p>
-                <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-12">
-                    Intelligently route API requests through our distributed network while controlling flow to prevent overwhelming services.
-                    Built on BEAM — the same 40-year-old technology powering WhatsApp, Discord, and the world's most reliable systems.
+
+                <p class="text-sm text-gray-500 max-w-xl mx-auto mb-10">
+                    Coordinated 2 req/sec default across our cluster. No retry storms. No thundering herd.
+                    <br>
+                    <a href="/blog/making-failure-boring-again" class="text-blue-600 hover:underline">Why we built this</a>
+                    &nbsp;·&nbsp;
+                    <a href="/blog/serverless-2-rip-operations" class="text-blue-600 hover:underline">Serverless? Read this</a>
                 </p>
+
                 <div class="space-x-4">
                     <a href="/signup"
                        class="inline-block bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800">
@@ -924,7 +943,7 @@ result = workflow.execute(order_data)
     <!-- Footer -->
     <div class="border-t py-8 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
-            <p class="font-semibold text-gray-900">© 2025 EZThrottle. TCP for APIs. The World's First API Aqueduct™</p>
+            <p class="font-semibold text-gray-900">© 2026 EZThrottle. Multi-region API proxy.</p>
             <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
             <div class="mt-4 space-x-4">
                 <a href="/" class="hover:text-black">Home</a>
