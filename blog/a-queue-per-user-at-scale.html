@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Queue Per User at Scale — EZThrottle Blog</title>
+    <meta name="description" content="Announcing AccountQueues: per-user, per-key queue isolation that solves the noisy neighbor problem. Plus: how API providers can control their own flow with two response headers.">
+    <meta name="author" content="Rahmi Pruitt">
+    <meta property="og:title" content="A Queue Per User at Scale">
+    <meta property="og:description" content="Announcing AccountQueues: per-user, per-key queue isolation, provider flow control headers, and why 2 RPS default protects the internet.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ezthrottle.network/blog/a-queue-per-user-at-scale">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@RahmiPruitt">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --border: #222222;
+            --border-2: #2a2a2a;
+            --text: #f0f0f0;
+            --muted: #666666;
+            --muted-2: #888888;
+            --accent: #6366f1;
+            --green: #10b981;
+            --red: #ef4444;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.7;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        article h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 3rem 0 1rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+        article h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 2rem 0 0.75rem;
+            color: var(--text);
+        }
+        article p {
+            margin: 1.1rem 0;
+            color: #b0b0b0;
+            line-height: 1.85;
+        }
+        article strong { color: var(--text); }
+        article a { color: #a5b4fc; }
+        article a:hover { text-decoration: underline; }
+        article ul {
+            margin: 1rem 0 1rem 1.5rem;
+            list-style: disc;
+        }
+        article li {
+            margin: 0.4rem 0;
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+        .code-block {
+            background: #0d0d0d;
+            border: 1px solid var(--border-2);
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.9;
+            color: #9ca3af;
+        }
+        .code-block .gr { color: #10b981; }
+        .code-block .rd { color: #ef4444; }
+        .code-block .bl { color: #60a5fa; }
+        .code-block .cm { color: #4b5563; }
+        .code-block .hl { color: #a5b4fc; }
+        .callout {
+            border-left: 3px solid;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+        .callout p { margin: 0; font-size: 0.9rem; }
+        .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82em;
+            background: #1a1a1a;
+            border: 1px solid var(--border-2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #a5b4fc;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav style="border-bottom: 1px solid var(--border); background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50;">
+    <div style="max-width: 720px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="/" class="mono" style="font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none;">EZThrottle</a>
+        <div style="display: flex; gap: 24px; font-size: 0.85rem; color: var(--muted-2);">
+            <a href="/blog" style="color: var(--muted-2); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">Blog</a>
+            <a href="/faq" style="color: var(--muted-2); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">FAQ</a>
+            <a href="/signup" style="background: #6366f1; color: white; padding: 7px 18px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.82rem;">Sign Up</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Article -->
+<article style="max-width: 720px; margin: 0 auto; padding: 64px 24px 96px;">
+
+    <!-- Header -->
+    <header style="margin-bottom: 56px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+            <span style="font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25); padding: 4px 12px; border-radius: 999px;">Announcement</span>
+            <time datetime="2026-03-23" style="font-size: 0.82rem; color: var(--muted);">March 23, 2026</time>
+        </div>
+        <h1 style="font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px; color: var(--text);">
+            A Queue Per User at Scale
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--muted-2); line-height: 1.75; margin: 0 0 28px;">
+            Announcing AccountQueues: per-user, per-key queue isolation that solves the noisy neighbor problem —
+            plus two response headers that let API providers control their own flow rate.
+        </p>
+        <div style="display: flex; align-items: center; gap: 12px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <div>
+                <p style="font-weight: 600; font-size: 0.9rem; color: var(--text); margin: 0;">Rahmi Pruitt</p>
+                <p style="font-size: 0.82rem; color: var(--muted); margin: 0;">Founder, EZThrottle</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Body -->
+
+    <h2>The noisy neighbor problem</h2>
+
+    <p>
+        If you've ever run a multi-tenant API — or called one — you've felt this.
+        One customer sends a thousand requests. Everyone else waits. The aggressive customer
+        doesn't know they're causing harm. The others don't know why their requests are slow.
+        You're stuck in the middle.
+    </p>
+
+    <p>
+        This is the noisy neighbor problem. It exists in cloud compute, in databases, in CDNs.
+        And it has always existed in API rate limiting infrastructure. Until now, EZThrottle
+        shared one queue per URL across all customers. Customer A flooding Stripe meant
+        Customer B's Stripe requests waited in line behind them.
+    </p>
+
+    <p>Today we're fixing that.</p>
+
+    <h2>Introducing AccountQueues</h2>
+
+    <p>
+        An AccountQueue is one dedicated queue per user, per API key — isolated from every other
+        customer, living globally across the EZThrottle cluster via Syn, our distributed process registry.
+    </p>
+
+    <div class="code-block">
+<span class="cm"># Before: one shared queue per URL</span>
+customer_a (1000 req) ──┐
+customer_b (2 req)   ──┤──▶ <span class="rd">[ SHARED QUEUE ]</span> ──▶ api.stripe.com
+customer_c (5 req)   ──┘
+                              ↑ customer_b waits hours
+
+<span class="cm"># After: one queue per user, per API key</span>
+customer_a ──▶ <span class="gr">[Queue A]</span> ──┐
+customer_b ──▶ <span class="gr">[Queue B]</span> ──┤──▶ api.stripe.com
+customer_c ──▶ <span class="gr">[Queue C]</span> ──┘
+<span class="gr">
+all three execute at their own pace. nobody waits for anyone else.</span>
+    </div>
+
+    <p>
+        Each queue is a BEAM process registered globally in Syn. Machine crashes?
+        Syn detects it, removes the registration. Next request for that user spawns a fresh queue
+        wherever it lands. No coordination code. No manual failover. The infrastructure heals itself.
+    </p>
+
+    <h2>Why this matters for distributed systems</h2>
+
+    <p>
+        Most teams aren't feeling this acutely today. But the trajectory is clear.
+    </p>
+
+    <p>
+        Imagine 50 distributed workers all sharing <code>sk_live_abc123</code> to call OpenAI.
+        Each worker thinks it has a 60 req/min budget. It doesn't — they share one budget across all 50.
+        The result: workers fight each other, requests get rate-limited unpredictably, and
+        your retry logic makes it worse by creating a thundering herd the moment the limit resets.
+    </p>
+
+    <p>
+        With AccountQueues, there is one global queue for <code>sk_live_abc123</code> across your entire cluster.
+        Every worker routes through it. The rate limit is respected exactly.
+        <strong>This is resource contention solved at the infrastructure layer — not in your application code.</strong>
+    </p>
+
+    <h2>AccountQueues are opt-in</h2>
+
+    <p>
+        AccountQueues are <strong>off by default.</strong> This is intentional.
+    </p>
+
+    <p>
+        EZThrottle's default is 2 requests per second per machine. We chose 2 RPS deliberately —
+        not because it's a technical constraint, but because we care about the health of the internet.
+        We're not here to help anyone flood an API. The default is conservative because most APIs
+        have rate limits, and we'd rather be a good citizen than squeeze out every last request per second.
+    </p>
+
+    <p>
+        If AccountQueues were on by default for any API key we've ever seen, an attacker could spam
+        requests with thousands of fake keys and turn EZThrottle into a process-spawning machine —
+        consuming memory until the cluster falls over. We're not doing that.
+    </p>
+
+    <p>
+        AccountQueues are enabled for APIs where per-user queuing makes clear sense: APIs that already
+        rate limit by API key. The current list — maintained in our open-source
+        <a href="https://github.com/rjpruitt16/ezconfig" target="_blank">ezconfig</a> library — includes
+        OpenAI, Anthropic, Stripe, GitHub, Twitter, Slack, Discord, HubSpot, Notion, Airtable,
+        Shopify, SendGrid, Twilio, and Google APIs.
+    </p>
+
+    <div class="callout" style="background: rgba(99,102,241,0.06); border-color: #6366f1;">
+        <p style="color: #c7d2fe;">
+            <strong style="color: #a5b4fc;">Want your API added to ezconfig?</strong><br>
+            <a href="https://github.com/rjpruitt16/ezconfig/issues" target="_blank">Open a GitHub issue</a>
+            with a link to your official rate limit documentation. Issues without supporting evidence
+            will be automatically closed. If you are the API owner, skip the issue — just use the
+            response headers below to opt in directly.
+        </p>
+    </div>
+
+    <h2>Provider flow control: two headers</h2>
+
+    <p>
+        If you're an API provider and you want to opt into AccountQueues — or control how fast
+        EZThrottle sends traffic to you — add these headers to your API responses.
+        EZThrottle reads them automatically. No config changes. No dashboard. Just a header.
+    </p>
+
+    <h3>X-EZTHROTTLE-ACCOUNT-QUEUE</h3>
+
+    <p>
+        Opt your API into per-user, per-key queue isolation dynamically.
+    </p>
+
+    <div class="code-block">
+<span class="cm"># Opt in: EZThrottle creates one queue per user, per API key for your domain</span>
+X-EZTHROTTLE-ACCOUNT-QUEUE: enabled
+
+<span class="cm"># Opt out: revert to shared queue</span>
+X-EZTHROTTLE-ACCOUNT-QUEUE: disabled
+    </div>
+
+    <p>
+        Once enabled, this persists for the life of the URL queue actor — typically until a deployment
+        or machine restart. You don't need to send it on every response, but sending it consistently
+        is a good practice.
+    </p>
+
+    <h3>X-EZTHROTTLE-RPS</h3>
+
+    <p>
+        Tell EZThrottle exactly how fast to go per user queue. EZThrottle adjusts in real time.
+        Your API is under load? Lower the value. Capacity recovered? Raise it.
+    </p>
+
+    <div class="code-block">
+X-EZTHROTTLE-RPS: 10    <span class="cm"># 10 req/sec per user queue</span>
+X-EZTHROTTLE-RPS: 0.5   <span class="cm"># 1 request every 2 seconds (current minimum)</span>
+    </div>
+
+    <p>
+        The current minimum is <strong>0.5 RPS</strong> — one request every two seconds.
+        As the EZThrottle cluster grows, we plan to support even lower rates for APIs that need them.
+        Values below 0.5 are rejected with a warning.
+    </p>
+
+    <h3>X-EZTHROTTLE-MAX-CONCURRENT</h3>
+
+    <p>
+        Limit how many requests from a single user queue can be in-flight simultaneously.
+    </p>
+
+    <div class="code-block">
+X-EZTHROTTLE-MAX-CONCURRENT: 5
+    </div>
+
+    <p>
+        Without AccountQueues, this means 5 per machine — multiply by your cluster size and
+        you get the real number. <strong>With AccountQueues, this means exactly 5. Per user. Globally.</strong>
+        One queue per user per key means the limit you set is the limit actually enforced —
+        not multiplied by how many machines happen to be running.
+    </p>
+
+    <h2>Default configurations via ezconfig</h2>
+
+    <p>
+        EZThrottle ships with sensible defaults for popular APIs via
+        <a href="https://github.com/rjpruitt16/ezconfig" target="_blank">ezconfig</a>,
+        a community-maintained open-source Gleam library. It sets RPS limits and concurrency
+        defaults for 14 major APIs so EZThrottle behaves correctly out of the box,
+        without any configuration on your end.
+    </p>
+
+    <p>
+        If your API isn't listed, EZThrottle falls back to 2 RPS — conservative and
+        internet-friendly. PRs are welcome.
+    </p>
+
+    <h2>What's coming next: tier flows</h2>
+
+    <p>
+        AccountQueues today give every user equal, isolated flow. Next up: tier-based priority
+        within each queue. Reserved customers get guaranteed throughput. Paid tier gets priority
+        over free. Free tier is best-effort. Same per-user isolation — different lanes within each queue.
+    </p>
+
+    <p>
+        This is fair queuing for HTTP. The same principle that lets your Netflix stream while
+        someone else downloads. Every customer gets their own lane. Tier flows determine
+        how fast each lane moves.
+    </p>
+
+    <div class="divider"></div>
+
+    <h2>The bigger picture</h2>
+
+    <p>
+        The internet solved this for TCP in 1988 — per-flow queuing, QoS, BGP routing around failures.
+        Every packet gets a fair share. No single flow starves the rest.
+        HTTP API calls have never had this layer. Every team builds their own retry logic,
+        their own rate limiting, their own per-customer fairness, from scratch, every time.
+    </p>
+
+    <p>
+        EZThrottle is that missing layer. The coordination infrastructure between your application
+        and every API it depends on. Bidirectional — protecting your calls going out,
+        and protecting your API from the inside.
+    </p>
+
+    <p>
+        AccountQueues are the first step toward making that real.
+    </p>
+
+    <!-- CTA -->
+    <div style="margin-top: 56px; padding: 40px; background: #111; border: 1px solid #222; border-radius: 12px; text-align: center;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin: 0 0 10px;">Try AccountQueues today</h3>
+        <p style="color: var(--muted-2); font-size: 0.9rem; margin: 0 0 24px; line-height: 1.6; max-width: 420px; margin-left: auto; margin-right: auto;">
+            Available on all paid tiers. Free tier uses the shared queue.
+            Questions? Want your API added to the default list?
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="/signup" style="background: #6366f1; color: white; padding: 11px 24px; border-radius: 8px; font-weight: 600; font-size: 0.88rem; text-decoration: none;">Start Free</a>
+            <a href="https://github.com/rjpruitt16/ezconfig/issues" target="_blank" style="border: 1px solid #333; color: #888; padding: 11px 24px; border-radius: 8px; font-weight: 500; font-size: 0.88rem; text-decoration: none;">Open an ezconfig issue</a>
+        </div>
+        <p style="margin: 20px 0 0; font-size: 0.82rem; color: var(--muted);">
+            Or email us directly: <a href="mailto:support@ezthrottle.network" style="color: #a5b4fc;">support@ezthrottle.network</a>
+        </p>
+    </div>
+
+</article>
+
+<!-- Footer -->
+<footer style="border-top: 1px solid var(--border); padding: 32px 24px; text-align: center;">
+    <div style="font-size: 0.82rem; color: var(--muted); display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+        <a href="/" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">Home</a>
+        <a href="/blog" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">Blog</a>
+        <a href="https://github.com/rjpruitt16/ezconfig" target="_blank" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">ezconfig</a>
+        <a href="https://twitter.com/RahmiPruitt" target="_blank" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">Twitter</a>
+        <a href="mailto:support@ezthrottle.network" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">support@ezthrottle.network</a>
+    </div>
+</footer>
+
+</body>
+</html>
