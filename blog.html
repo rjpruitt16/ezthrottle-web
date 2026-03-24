@@ -3,142 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - EZThrottle</title>
+    <title>Blog — EZThrottle</title>
     <meta name="description" content="Engineering insights on API reliability, distributed systems, and making failure boring.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --border: #222222;
+            --border-2: #2a2a2a;
+            --text: #f0f0f0;
+            --muted: #888888;
+            --muted-2: #b4b4b4;
+            --accent: #6366f1;
+            --green: #10b981;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        a { text-decoration: none; }
+    </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <div class="bg-white border-b">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center">
-                <a href="/" class="text-2xl font-bold text-gray-900">EZThrottle</a>
-                <div class="space-x-6 text-sm">
-                    <a href="/blog" class="text-black font-semibold">Blog</a>
-                    <a href="/faq" class="text-gray-600 hover:text-black">FAQ</a>
-                    <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="text-gray-600 hover:text-black">GitHub</a>
-                    <a href="/login" class="text-gray-600 hover:text-black">Login</a>
-                    <a href="/signup" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Sign Up</a>
+<body>
+
+<!-- Nav -->
+<nav style="border-bottom: 1px solid var(--border); background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50;">
+    <div style="max-width: 960px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="/" class="mono" style="font-size: 1.1rem; font-weight: 600; color: var(--text);">EZThrottle</a>
+        <div style="display: flex; align-items: center; gap: 28px; font-size: 0.875rem;">
+            <a href="/blog" style="color: white; font-weight: 600;">Blog</a>
+            <a href="/faq" style="color: var(--muted-2);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#b4b4b4'">FAQ</a>
+            <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" style="color: var(--muted-2);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#b4b4b4'">GitHub</a>
+            <a href="/login" style="color: var(--muted-2);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#b4b4b4'">Login</a>
+            <a href="/signup" style="background: #6366f1; color: white; padding: 8px 20px; border-radius: 7px; font-weight: 600; font-size: 0.85rem;">Sign Up</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Header -->
+<div style="padding: 64px 24px 48px; border-bottom: 1px solid var(--border);">
+    <div style="max-width: 960px; margin: 0 auto;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 12px;">Blog</h1>
+        <p style="color: var(--muted-2); font-size: 1.05rem;">Engineering insights on API reliability, distributed systems, and making failure boring.</p>
+    </div>
+</div>
+
+<!-- Articles -->
+<div style="max-width: 960px; margin: 0 auto; padding: 56px 24px 96px;">
+    <div style="display: flex; flex-direction: column; gap: 0;">
+
+        <!-- Article 5 - Latest -->
+        <article style="padding: 40px 0; border-bottom: 1px solid var(--border);">
+            <a href="/blog/a-queue-per-user-at-scale" style="display: block;" class="article-link">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                    <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25); padding: 3px 10px; border-radius: 999px;">New</span>
+                    <time style="font-size: 0.82rem; color: var(--muted);">March 23, 2026</time>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Header -->
-    <div class="bg-white py-16">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
-            <p class="text-xl text-gray-600">Engineering insights on API reliability, distributed systems, and making failure boring.</p>
-        </div>
-    </div>
-
-    <!-- Articles -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="space-y-12">
-            <!-- Article 5 - Latest -->
-            <article class="border-b pb-12">
-                <a href="/blog/a-queue-per-user-at-scale" class="group">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">New</span>
-                        <time datetime="2026-03-23" class="text-sm text-gray-500">March 23, 2026</time>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 mt-1 group-hover:text-blue-600">
-                        A Queue Per User at Scale
-                    </h2>
-                    <p class="text-gray-600 mt-3">
-                        Announcing AccountQueues: per-user, per-key queue isolation that solves the noisy neighbor problem. Every customer gets their own lane. Plus: two response headers that let API providers control their own flow rate, and why our 2 RPS default protects the internet.
-                    </p>
-                    <p class="text-blue-600 mt-4 font-medium group-hover:underline">Read more &rarr;</p>
-                </a>
-            </article>
-
-            <!-- Article 4 -->
-            <article class="border-b pb-12">
-                <a href="/blog/multi-region-api-failures-langgraph" class="group">
-                    <time datetime="2026-02-16" class="text-sm text-gray-500">February 16, 2026</time>
-                    <h2 class="text-2xl font-bold text-gray-900 mt-2 group-hover:text-blue-600">
-                        How to Handle Multi-Region API Failures in LangGraph
-                    </h2>
-                    <p class="text-gray-600 mt-3">
-                        US-EAST-1 went down. Somebody got fired. The worst outages aren't dramatic - they're invisible. Your workflow isn't crashing, it's just slow. Here's how to automatically reroute around regional failures.
-                    </p>
-                    <p class="text-blue-600 mt-4 font-medium group-hover:underline">Read more &rarr;</p>
-                </a>
-            </article>
-
-            <!-- Article 3 -->
-            <article class="border-b pb-12">
-                <a href="/blog/stop-losing-langgraph-progress" class="group">
-                    <time datetime="2026-02-16" class="text-sm text-gray-500">February 16, 2026</time>
-                    <h2 class="text-2xl font-bold text-gray-900 mt-2 group-hover:text-blue-600">
-                        Stop Losing LangGraph Progress to 429 Errors
-                    </h2>
-                    <p class="text-gray-600 mt-3">
-                        How to scale AI agents without burning out engineers. LangGraph handles state beautifully, but when OpenRouter returns 429 at step 7, your workflow crashes. Here's how to fix that with coordinated retries, fallback racing, and webhook-based resumption.
-                    </p>
-                    <p class="text-blue-600 mt-4 font-medium group-hover:underline">Read more &rarr;</p>
-                </a>
-            </article>
-
-            <!-- Article 2 -->
-            <article class="border-b pb-12">
-                <a href="/blog/serverless-2-rip-operations" class="group">
-                    <time datetime="2026-01-30" class="text-sm text-gray-500">January 30, 2026</time>
-                    <h2 class="text-2xl font-bold text-gray-900 mt-2 group-hover:text-blue-600">
-                        Serverless 2.0: RIP Operations
-                    </h2>
-                    <p class="text-gray-600 mt-3">
-                        What happens when you stop managing retries and start shipping features. Replace Lambda, SQS, DynamoDB, and Step Functions with one API call. Scale requests, not pods. Build in a weekend what used to take months of IAM policies and debugging.
-                    </p>
-                    <p class="text-blue-600 mt-4 font-medium group-hover:underline">Read more &rarr;</p>
-                </a>
-            </article>
-
-            <!-- Article 1 -->
-            <article class="border-b pb-12">
-                <a href="/blog/making-failure-boring-again" class="group">
-                    <time datetime="2026-01-28" class="text-sm text-gray-500">January 28, 2026</time>
-                    <h2 class="text-2xl font-bold text-gray-900 mt-2 group-hover:text-blue-600">
-                        EZThrottle: Making Failure Boring Again
-                    </h2>
-                    <p class="text-gray-600 mt-3">
-                        Modern software fails with 429s, timeouts, and regions going dark. I built EZThrottle because I got tired of pretending this was normal. By turning retries, rate limits, and region health into shared state, it gives you something rare in distributed systems: predictable behavior when things go wrong.
-                    </p>
-                    <p class="text-blue-600 mt-4 font-medium group-hover:underline">Read more &rarr;</p>
-                </a>
-            </article>
-        </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="bg-black text-white py-16">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-4">Join Early Adopters</h2>
-            <p class="text-xl mb-8">Start with 1 million free requests. No credit card required.</p>
-            <a href="/signup"
-               class="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
-                Start Free &rarr;
+                <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px; transition: color 0.15s;">A Queue Per User at Scale</h2>
+                <p style="color: var(--muted-2); line-height: 1.75; max-width: 680px; margin-bottom: 16px;">
+                    Announcing AccountQueues: per-user, per-key queue isolation that solves the noisy neighbor problem. Every customer gets their own lane. Plus: two response headers that let API providers control their own flow rate, and why our 2 RPS default protects the internet.
+                </p>
+                <span style="font-size: 0.85rem; color: #a5b4fc; font-weight: 500;">Read more →</span>
             </a>
-        </div>
-    </div>
+        </article>
 
-    <!-- Footer -->
-    <div class="border-t py-8 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 text-center text-gray-600">
-            <p class="font-semibold text-gray-900">&copy; 2026 EZThrottle. TCP for APIs. The World's First API Aqueduct&trade;</p>
-            <p class="text-sm mt-2">Built on BEAM by a solo founder who believes engineers deserve to sleep at night.</p>
-            <div class="mt-4 space-x-4">
-                <a href="/" class="hover:text-black">Home</a>
-                <a href="/blog" class="hover:text-black">Blog</a>
-                <a href="/faq" class="hover:text-black">FAQ</a>
-                <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-black">GitHub</a>
-                <a href="https://github.com/rjpruitt16/ezthrottle-sdks" target="_blank" class="hover:text-black">SDKs</a>
-                <a href="https://twitter.com/RahmiPruitt" target="_blank" class="hover:text-black">Twitter</a>
-                <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-black">LinkedIn</a>
-                <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-black">YouTube</a>
-                <a href="mailto:support@ezthrottle.network" class="hover:text-black">Contact</a>
-            </div>
+        <!-- Article 4 -->
+        <article style="padding: 40px 0; border-bottom: 1px solid var(--border);">
+            <a href="/blog/multi-region-api-failures-langgraph" style="display: block;" class="article-link">
+                <time style="font-size: 0.82rem; color: var(--muted); display: block; margin-bottom: 14px;">February 16, 2026</time>
+                <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px;">How to Handle Multi-Region API Failures in LangGraph</h2>
+                <p style="color: var(--muted-2); line-height: 1.75; max-width: 680px; margin-bottom: 16px;">
+                    US-EAST-1 went down. Somebody got fired. The worst outages aren't dramatic — they're invisible. Your workflow isn't crashing, it's just slow. Here's how to automatically reroute around regional failures.
+                </p>
+                <span style="font-size: 0.85rem; color: #a5b4fc; font-weight: 500;">Read more →</span>
+            </a>
+        </article>
+
+        <!-- Article 3 -->
+        <article style="padding: 40px 0; border-bottom: 1px solid var(--border);">
+            <a href="/blog/stop-losing-langgraph-progress" style="display: block;" class="article-link">
+                <time style="font-size: 0.82rem; color: var(--muted); display: block; margin-bottom: 14px;">February 16, 2026</time>
+                <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px;">Stop Losing LangGraph Progress to 429 Errors</h2>
+                <p style="color: var(--muted-2); line-height: 1.75; max-width: 680px; margin-bottom: 16px;">
+                    How to scale AI agents without burning out engineers. LangGraph handles state beautifully, but when OpenRouter returns 429 at step 7, your workflow crashes. Here's how to fix that with coordinated retries, fallback racing, and webhook-based resumption.
+                </p>
+                <span style="font-size: 0.85rem; color: #a5b4fc; font-weight: 500;">Read more →</span>
+            </a>
+        </article>
+
+        <!-- Article 2 -->
+        <article style="padding: 40px 0; border-bottom: 1px solid var(--border);">
+            <a href="/blog/serverless-2-rip-operations" style="display: block;" class="article-link">
+                <time style="font-size: 0.82rem; color: var(--muted); display: block; margin-bottom: 14px;">January 30, 2026</time>
+                <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px;">Serverless 2.0: RIP Operations</h2>
+                <p style="color: var(--muted-2); line-height: 1.75; max-width: 680px; margin-bottom: 16px;">
+                    What happens when you stop managing retries and start shipping features. Replace Lambda, SQS, DynamoDB, and Step Functions with one API call. Scale requests, not pods. Build in a weekend what used to take months of IAM policies and debugging.
+                </p>
+                <span style="font-size: 0.85rem; color: #a5b4fc; font-weight: 500;">Read more →</span>
+            </a>
+        </article>
+
+        <!-- Article 1 -->
+        <article style="padding: 40px 0;">
+            <a href="/blog/making-failure-boring-again" style="display: block;" class="article-link">
+                <time style="font-size: 0.82rem; color: var(--muted); display: block; margin-bottom: 14px;">January 28, 2026</time>
+                <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px;">EZThrottle: Making Failure Boring Again</h2>
+                <p style="color: var(--muted-2); line-height: 1.75; max-width: 680px; margin-bottom: 16px;">
+                    Modern software fails with 429s, timeouts, and regions going dark. I built EZThrottle because I got tired of pretending this was normal. By turning retries, rate limits, and region health into shared state, it gives you something rare in distributed systems: predictable behavior when things go wrong.
+                </p>
+                <span style="font-size: 0.85rem; color: #a5b4fc; font-weight: 500;">Read more →</span>
+            </a>
+        </article>
+
+    </div>
+</div>
+
+<!-- CTA -->
+<div style="border-top: 1px solid var(--border); padding: 80px 24px; text-align: center;">
+    <div style="max-width: 480px; margin: 0 auto;">
+        <h2 style="font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px;">Ready to try it?</h2>
+        <p style="color: var(--muted-2); margin-bottom: 28px;">1 million requests free. No credit card required.</p>
+        <a href="/signup" style="display: inline-block; background: #6366f1; color: white; padding: 13px 32px; border-radius: 8px; font-weight: 600; font-size: 0.95rem;">Start Free →</a>
+        <p style="margin-top: 16px; font-size: 0.82rem; color: var(--muted);">
+            Questions? <a href="mailto:support@ezthrottle.network" style="color: #a5b4fc;">support@ezthrottle.network</a>
+        </p>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer style="border-top: 1px solid var(--border); padding: 32px 24px;">
+    <div style="max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <span class="mono" style="font-size: 0.9rem; font-weight: 600; color: var(--text);">EZThrottle</span>
+        <div style="display: flex; gap: 20px; font-size: 0.82rem; color: var(--muted); flex-wrap: wrap;">
+            <a href="/" style="color: var(--muted);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">Home</a>
+            <a href="/blog" style="color: var(--muted);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">Blog</a>
+            <a href="/faq" style="color: var(--muted);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">FAQ</a>
+            <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" style="color: var(--muted);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">GitHub</a>
+            <a href="https://twitter.com/RahmiPruitt" target="_blank" style="color: var(--muted);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">Twitter</a>
+            <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" style="color: var(--muted);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">LinkedIn</a>
+            <a href="mailto:support@ezthrottle.network" style="color: var(--muted);" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">Contact</a>
         </div>
     </div>
+</footer>
+
+<style>
+    .article-link:hover h2 { color: #a5b4fc; }
+</style>
+
 </body>
 </html>
