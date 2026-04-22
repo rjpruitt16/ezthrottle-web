@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An Operationless Network for a New World of Devices — EZThrottle Blog</title>
+    <meta name="description" content="By 2029, AI agents and embedded devices will become too chaotic without a new internet protocol. No company is building the bridge from serverless to operationless. At least until I built EZThrottle.">
+    <meta name="author" content="Rahmi Pruitt">
+    <meta property="og:title" content="An Operationless Network for a New World of Devices">
+    <meta property="og:description" content="By 2029, AI agents and embedded devices will become too chaotic without a new internet protocol. No company is building the bridge from serverless to operationless. At least until I built EZThrottle.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ezthrottle.network/blog/operationless-network-for-a-new-world-of-devices">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@RahmiPruitt">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --border: #222222;
+            --border-2: #2a2a2a;
+            --text: #f0f0f0;
+            --muted: #888888;
+            --muted-2: #b4b4b4;
+            --accent: #6366f1;
+            --green: #10b981;
+            --red: #ef4444;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.7;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        article h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 3rem 0 1rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+        article h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 2rem 0 0.75rem;
+            color: var(--text);
+        }
+        article p {
+            margin: 1.1rem 0;
+            color: #c0c0c0;
+            line-height: 1.85;
+        }
+        article strong { color: var(--text); }
+        article a { color: #a5b4fc; }
+        article a:hover { text-decoration: underline; }
+        article ul {
+            margin: 1rem 0 1rem 1.5rem;
+            list-style: disc;
+        }
+        article li {
+            margin: 0.4rem 0;
+            color: #c0c0c0;
+            line-height: 1.7;
+        }
+        .callout {
+            border-left: 3px solid;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+        .callout p { margin: 0; font-size: 0.9rem; }
+        .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82em;
+            background: #1a1a1a;
+            border: 1px solid var(--border-2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #a5b4fc;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav style="border-bottom: 1px solid var(--border); background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50;">
+    <div style="max-width: 720px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="/" class="mono" style="font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none;">EZThrottle</a>
+        <div style="display: flex; gap: 24px; font-size: 0.85rem; color: var(--muted-2);">
+            <a href="/blog" style="color: var(--muted-2); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">Blog</a>
+            <a href="/faq" style="color: var(--muted-2); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#888'">FAQ</a>
+            <a href="/signup" style="background: #6366f1; color: white; padding: 7px 18px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.82rem;">Sign Up</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Article -->
+<article style="max-width: 720px; margin: 0 auto; padding: 64px 24px 96px;">
+
+    <!-- Header -->
+    <header style="margin-bottom: 56px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+            <span style="font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #a5b4fc; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25); padding: 4px 12px; border-radius: 999px;">Vision</span>
+            <time datetime="2026-04-21" style="font-size: 0.82rem; color: var(--muted);">April 21, 2026</time>
+        </div>
+        <h1 style="font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px; color: var(--text);">
+            An Operationless Network for a New World of Devices
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--muted-2); line-height: 1.75; margin: 0 0 28px;">
+            By 2029, AI agents and embedded devices will become too chaotic without a new internet protocol. No company is building the bridge from serverless to operationless. At least until I built EZThrottle.
+        </p>
+        <div style="display: flex; align-items: center; gap: 12px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <div>
+                <p style="font-weight: 600; font-size: 0.9rem; color: var(--text); margin: 0;">Rahmi Pruitt</p>
+                <p style="font-size: 0.82rem; color: var(--muted); margin: 0;">Founder, EZThrottle</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Body -->
+
+    <p>
+        As I write this, it's 2026. By 2029, the machines of Layer 8 — the AI agents and embedded devices — will become too chaotic without a new internet protocol. The cars we drive will be making more split-second decisions with our lives. Our wearable AI devices will be escalating to bigger, more powerful models managing our health. Robots will be making thousands of API calls per minute just to navigate a warehouse floor.
+    </p>
+
+    <p>
+        Each year hardware becomes more optimized, but performance is bottlenecked by the chaos of Layer 7. A partial outage already costs the economy billions. And the industry's answer is still threads sleeping on retries, creating 2x — sometimes 4x — more demand on the API provider. The servers of the API provider are taxed, and when they slow down the machine punishes them with more retries, causing the server to crash. The autoscalers only have a limited amount of time to summon new compute as the remaining servers go from drowning to worse. All while the battery life of the device tanks from retries. No company is building the bridge needed for Layer 8 to go from serverless to operationless.
+    </p>
+
+    <p>Well, at least until I built EZThrottle.</p>
+
+    <div class="divider"></div>
+
+    <p>
+        Today, I have no employees, no investors, and limited runway. I say that not to ask for your sympathy but to filter your attention. If you need a logo wall to keep reading, this article is not for you. If you are a founder who has felt the operational weight of the modern cloud — <a href="https://www.figma.com/blog/migrating-onto-kubernetes/" target="_blank">Figma spent nearly a year migrating to Kubernetes just to scale</a> — then read on.
+    </p>
+
+    <p>
+        EZThrottle does not ask you to migrate. You wrap your existing requests, point them through EZThrottle, and get webhook delivery through partial outages, retry storms handled automatically, and per-user queue isolation out of the box. That is the entire onboarding. The hard part is already built. <a href="https://ezthrottle.network/blog/making-failure-boring-again">Read how it works →</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <p>
+        Instead of selling you more machines, I will sell you more isolated memory and scale your requests. I may be a solopreneur today, but I am standing on the shoulders of 30 years of unparalleled reliable dominance in mobile networks. EZThrottle is built on the BEAM — a runtime born to solve the networking challenges of telecommunications. They built a runtime to handle isolating each user's call in memory so it could fearlessly handle the spiky demands of telephone networks while making sure each caller received fair, soft real-time performance. That is the very same need you and your AI agents have. The runtime was built to solve queuing and routing at scale. It is the same runtime WhatsApp used to serve 900 million customers with fewer than 50 engineers.
+    </p>
+
+    <p>
+        Your most sensitive devices — the sensors that monitor life and warn of an impending flood — would survive partial outages and retry storms because each customer gets their own queue in memory. The traditional hyperscalers will sell you more compute when the real issue is coordination and pacing. In every layer below Layer 7, the internet learned that data should not flow as fast as possible — data flows orderly. We don't flood other people's networks. We coordinate rhythm across trillions of queues, all slowing down or speeding up based on signals from the sender. The pain of the receiver is the pain of the sender. The modern cloud has focused its efforts on flood protection instead of reliable delivery — and reliable delivery will be paramount for Layer 8 by 2029.
+    </p>
+
+    <div class="divider"></div>
+
+    <p>
+        EZThrottle allows API providers to signal the flow of each user through response headers. By default it is 2 RPS and can be configured lower. My critics will tell you this is slow — but 2 RPS per user with the ability to race requests across regions and cancel the loser changes that math entirely. <a href="https://ezthrottle.network/blog/serverless-2-rip-operations">See Serverless 2.0: RIP Operations →</a> Ethical compute — where API providers can manage the pace of flow — is important for a fair, equitable, and maintainable internet for all.
+    </p>
+
+    <p>
+        The API layer will also be flooded by AI agent traffic. The same network protocol that battles through partial outages to deliver a webhook — saving device energy by eliminating sleeping threads — is the same protocol that maintains fairness, isolation, and order for spiky AI traffic.
+    </p>
+
+    <div class="divider"></div>
+
+    <p>
+        The benchmarks are coming. But the world of devices cannot afford sleeping thread retries, unhandled 500s, or retry storms any longer. No sleeping threads. 500 errors rerouted to other regions automatically. 429s handled without the device ever knowing. This is the foundation of Layer 8 — machines and devices needing soft real-time, fair multi-tenant pipelines at scale. Just as automating the telephone queue gave us the confidence to trust an ambulance would get through, a reliable, non-retrying request will save millions of lives soon.
+    </p>
+
+    <!-- CTA -->
+    <div style="margin-top: 56px; padding: 40px; background: #111; border: 1px solid #222; border-radius: 12px; text-align: center;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin: 0 0 10px;">Build on the right foundation</h3>
+        <p style="color: var(--muted-2); font-size: 0.9rem; margin: 0 0 24px; line-height: 1.6; max-width: 420px; margin-left: auto; margin-right: auto;">
+            1 million requests free. No credit card required. Wrap your first request in an afternoon.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="/signup" style="background: #6366f1; color: white; padding: 11px 24px; border-radius: 8px; font-weight: 600; font-size: 0.88rem; text-decoration: none;">Start Free</a>
+            <a href="/blog" style="border: 1px solid #333; color: #888; padding: 11px 24px; border-radius: 8px; font-weight: 500; font-size: 0.88rem; text-decoration: none;">Read more →</a>
+        </div>
+        <p style="margin: 20px 0 0; font-size: 0.82rem; color: var(--muted);">
+            Questions? <a href="mailto:support@ezthrottle.network" style="color: #a5b4fc;">support@ezthrottle.network</a>
+        </p>
+    </div>
+
+</article>
+
+<!-- Footer -->
+<footer style="border-top: 1px solid var(--border); padding: 32px 24px; text-align: center;">
+    <div style="font-size: 0.82rem; color: var(--muted); display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+        <a href="/" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">Home</a>
+        <a href="/blog" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">Blog</a>
+        <a href="https://github.com/rjpruitt16/ezconfig" target="_blank" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">ezconfig</a>
+        <a href="https://twitter.com/RahmiPruitt" target="_blank" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">Twitter</a>
+        <a href="mailto:support@ezthrottle.network" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#666'">support@ezthrottle.network</a>
+    </div>
+</footer>
+
+</body>
+</html>
