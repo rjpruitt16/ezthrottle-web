@@ -204,8 +204,8 @@
             <a href="/blog" class="hover:text-white transition-colors">Blog</a>
             <a href="/faq" class="hover:text-white transition-colors">FAQ</a>
             <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-white transition-colors">GitHub</a>
-            <a href="/login" class="hover:text-white transition-colors">Login</a>
-            <a href="/signup" class="btn-primary" style="padding: 8px 20px; font-size: 0.85rem;">Sign Up</a>
+            <a href="https://github.com/rjpruitt16/aquifer" target="_blank" class="hover:text-white transition-colors">Aquifer (OSS)</a>
+            <span style="padding: 6px 16px; font-size: 0.78rem; border: 1px solid var(--border-2); border-radius: 6px; color: var(--muted-2);">Closed Beta</span>
         </div>
     </div>
 </nav>
@@ -221,7 +221,7 @@
 
         <div class="badge badge-accent" style="margin-bottom: 28px;">
             <span class="pulse"></span>
-            Early Access — 3 regions live
+            Closed Beta — not accepting public signups right now
         </div>
 
         <h1 style="font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px;">
@@ -249,13 +249,16 @@
         </div>
 
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="/signup" class="btn-primary">Start Free — 1M requests</a>
+            <a href="https://github.com/rjpruitt16/aquifer" target="_blank" class="btn-primary">See Aquifer (open source) →</a>
             <a href="#how-it-works" class="btn-ghost">See how it works</a>
         </div>
 
         <p style="margin-top: 20px; font-size: 0.8rem; color: var(--muted);">
-            No credit card required &nbsp;·&nbsp;
+            Closed beta — not accepting signups right now &nbsp;·&nbsp;
             <a href="/blog/making-failure-boring-again" style="color: var(--muted-2);" class="hover:text-white transition-colors">Why we built this</a>
+        </p>
+        <p style="margin-top: 8px; font-size: 0.8rem; color: var(--muted);">
+            Want a private cluster? <a href="mailto:support@ezthrottle.network?subject=Private%20Cluster%20Inquiry" style="color: var(--muted-2);" class="hover:text-white transition-colors">support@ezthrottle.network</a>
         </p>
     </div>
 </section>
@@ -784,7 +787,7 @@ resp, _ := client.QueueRequest(
     <div class="max-w-6xl mx-auto px-6">
         <div style="text-align: center; margin-bottom: 64px;">
             <h2 style="font-size: 2.25rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px;">Simple, transparent pricing</h2>
-            <p style="color: var(--muted-2);">Start free. Scale as you grow.</p>
+            <p style="color: var(--muted-2);">Where this is headed post-beta. Not accepting signups yet.</p>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px;">
@@ -800,7 +803,7 @@ resp, _ := client.QueueRequest(
                     <li>✓ Webhook delivery</li>
                     <li style="color: var(--muted);">— Queue per user</li>
                 </ul>
-                <a href="/signup" style="display: block; text-align: center; padding: 8px; border-radius: 6px; border: 1px solid var(--border-2); color: var(--muted-2); font-size: 0.82rem; font-weight: 500;" class="hover:border-gray-500 hover:text-white transition-colors">Get Started</a>
+                <span style="display: block; text-align: center; padding: 8px; border-radius: 6px; border: 1px solid var(--border-2); color: var(--muted); font-size: 0.82rem; font-weight: 500;">Closed Beta</span>
             </div>
 
             <!-- Starter -->
@@ -814,7 +817,7 @@ resp, _ := client.QueueRequest(
                     <li>✓ Priority routing</li>
                     <li>✓ Queue per user</li>
                 </ul>
-                <a href="/signup" style="display: block; text-align: center; padding: 8px; border-radius: 6px; border: 1px solid var(--border-2); color: var(--muted-2); font-size: 0.82rem; font-weight: 500;" class="hover:border-gray-500 hover:text-white transition-colors">Get Started</a>
+                <span style="display: block; text-align: center; padding: 8px; border-radius: 6px; border: 1px solid var(--border-2); color: var(--muted); font-size: 0.82rem; font-weight: 500;">Closed Beta</span>
             </div>
 
             <!-- Growth -->
@@ -828,7 +831,7 @@ resp, _ := client.QueueRequest(
                     <li>✓ Dashboard</li>
                     <li>✓ Queue per user</li>
                 </ul>
-                <a href="/signup" style="display: block; text-align: center; padding: 8px; border-radius: 6px; border: 1px solid var(--border-2); color: var(--muted-2); font-size: 0.82rem; font-weight: 500;" class="hover:border-gray-500 hover:text-white transition-colors">Get Started</a>
+                <span style="display: block; text-align: center; padding: 8px; border-radius: 6px; border: 1px solid var(--border-2); color: var(--muted); font-size: 0.82rem; font-weight: 500;">Closed Beta</span>
             </div>
 
             <!-- Pro (popular) -->
@@ -843,7 +846,7 @@ resp, _ := client.QueueRequest(
                     <li>✓ Advanced dashboard</li>
                     <li>✓ Queue per user</li>
                 </ul>
-                <a href="/signup" style="display: block; text-align: center; padding: 8px; border-radius: 6px; background: var(--accent); color: white; font-size: 0.82rem; font-weight: 600;">Get Started</a>
+                <span style="display: block; text-align: center; padding: 8px; border-radius: 6px; background: var(--border-2); color: var(--muted-2); font-size: 0.82rem; font-weight: 600;">Closed Beta</span>
             </div>
 
             <!-- Enterprise -->
@@ -880,17 +883,17 @@ resp, _ := client.QueueRequest(
                 <span class="text-gradient-indigo">your APIs are missing.</span>
             </h2>
             <p style="color: var(--muted-2); margin-bottom: 36px; line-height: 1.7;">
-                Start free. Integrate in 30 minutes.
-                By the time your distributed agents start fighting over rate limits,
-                you'll already have the infrastructure to handle it.
+                EZThrottle is currently in closed beta and not accepting public signups.
+                Check out Aquifer, the open-source Go runtime the same ideas are built on —
+                or get in touch if you're interested in a private cluster.
             </p>
             <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-                <a href="/signup" class="btn-primary">Start Free — 1M requests</a>
+                <a href="https://github.com/rjpruitt16/aquifer" target="_blank" class="btn-primary">See Aquifer on GitHub →</a>
                 <a href="/blog" class="btn-ghost">Read the blog</a>
             </div>
-            <p style="margin-top: 16px; font-size: 0.78rem; color: var(--muted);">No credit card required.</p>
+            <p style="margin-top: 16px; font-size: 0.78rem; color: var(--muted);">Closed beta — not accepting signups right now.</p>
             <p style="margin-top: 12px; font-size: 0.85rem; color: var(--muted-2);">
-                Questions? <a href="mailto:support@ezthrottle.network" style="color: var(--accent);" class="hover:underline">support@ezthrottle.network</a>
+                Want a private cluster? <a href="mailto:support@ezthrottle.network?subject=Private%20Cluster%20Inquiry" style="color: var(--accent);" class="hover:underline">support@ezthrottle.network</a>
             </p>
         </div>
     </div>
@@ -913,6 +916,7 @@ resp, _ := client.QueueRequest(
                 <a href="/blog" class="hover:text-white transition-colors">Blog</a>
                 <a href="/faq" class="hover:text-white transition-colors">FAQ</a>
                 <a href="https://github.com/rjpruitt16/ezthrottle-web" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+                <a href="https://github.com/rjpruitt16/aquifer" target="_blank" class="hover:text-white transition-colors">Aquifer (OSS)</a>
                 <a href="https://twitter.com/RahmiPruitt" target="_blank" class="hover:text-white transition-colors">Twitter</a>
                 <a href="https://www.linkedin.com/in/rahmi-pruitt-a1bb4a127/" target="_blank" class="hover:text-white transition-colors">LinkedIn</a>
                 <a href="https://www.youtube.com/@theblacktechexperience" target="_blank" class="hover:text-white transition-colors">YouTube</a>
