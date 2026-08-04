@@ -781,6 +781,67 @@ resp, _ := client.QueueRequest(
 </section>
 
 <!-- ============================================================ -->
+<!-- OPEN SOURCE -->
+<!-- ============================================================ -->
+<section style="border-top: 1px solid var(--border);">
+    <div class="max-w-6xl mx-auto px-6">
+        <div style="text-align: center; margin-bottom: 64px;">
+            <h2 style="font-size: 2.25rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px;">Open source, MIT licensed</h2>
+            <p style="color: var(--muted-2);">EZThrottle is closed beta right now, but the ideas underneath it aren't locked up. Run them yourself.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 32px;">
+
+            <!-- Aquifer -->
+            <div class="card p-6">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                    <span style="font-size: 1.5rem;">🔷</span>
+                    <span style="font-weight: 600; font-size: 1rem;">Aquifer</span>
+                    <span style="font-size: 0.7rem; color: var(--muted); border: 1px solid var(--border-2); border-radius: 999px; padding: 2px 10px;">Go</span>
+                </div>
+                <p style="color: var(--muted-2); font-size: 0.85rem; line-height: 1.7; margin-bottom: 16px;">
+                    A self-hosted Go runtime for the moment an agent's retries turn into a billing and reliability
+                    problem. Same core idea as EZThrottle, built for teams that want it running on their own
+                    infrastructure instead of a managed service.
+                </p>
+                <ul style="font-size: 0.8rem; color: var(--muted-2); line-height: 2.2; margin-bottom: 20px;">
+                    <li>✓ Durable queue — SQLite by default, or an optional Pebble/LSM backend</li>
+                    <li>✓ Dynamic pacing driven by the upstream's own response headers, never the caller</li>
+                    <li>✓ Admission control that sheds load with clean 429/413s instead of falling over</li>
+                    <li>✓ L8 protocol — Ed25519-signed webhooks, no shared secrets</li>
+                </ul>
+                <a href="https://github.com/rjpruitt16/aquifer" target="_blank" style="font-size: 0.82rem; color: var(--accent);" class="hover:underline">View on GitHub →</a>
+            </div>
+
+            <!-- EZThrottle Local -->
+            <div class="card p-6">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                    <span style="font-size: 1.5rem;">⚗️</span>
+                    <span style="font-weight: 600; font-size: 1rem;">EZThrottle Local</span>
+                    <span style="font-size: 0.7rem; color: var(--muted); border: 1px solid var(--border-2); border-radius: 999px; padding: 2px 10px;">Elixir / BEAM</span>
+                </div>
+                <p style="color: var(--muted-2); font-size: 0.85rem; line-height: 1.7; margin-bottom: 16px;">
+                    The same durable, fair-queuing problem Aquifer solves, rebuilt independently from scratch on
+                    the BEAM — a second implementation in a completely different runtime, used to cross-validate
+                    the architecture rather than just take the first version's word for it.
+                </p>
+                <ul style="font-size: 0.8rem; color: var(--muted-2); line-height: 2.2; margin-bottom: 20px;">
+                    <li>✓ Mnesia-backed durability, verified with real crash tests</li>
+                    <li>✓ Per-tenant queue isolation — one account's traffic can't starve another's</li>
+                    <li>✓ Live job progress over SSE, with automatic webhook fallback</li>
+                    <li>✓ L8 protocol — same signed-webhook delivery as Aquifer</li>
+                </ul>
+                <a href="https://github.com/rjpruitt16/ezthrottle-local" target="_blank" style="font-size: 0.82rem; color: var(--accent);" class="hover:underline">View on GitHub →</a>
+            </div>
+        </div>
+
+        <p style="text-align: center; font-size: 0.8rem; color: var(--muted);">
+            Both MIT licensed. Pull requests welcome — see each repo's README for what "done" looks like there.
+        </p>
+    </div>
+</section>
+
+<!-- ============================================================ -->
 <!-- FINAL CTA -->
 <!-- ============================================================ -->
 <section style="border-top: 1px solid var(--border);">
